@@ -840,6 +840,8 @@ ActiveRecord::Schema.define(version: 2021_06_21_155000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "body"
+    t.bigint "screen_id"
+    t.index ["screen_id"], name: "index_research_plans_on_screen_id"
   end
 
   create_table "residues", id: :serial, force: :cascade do |t|
@@ -1124,6 +1126,7 @@ ActiveRecord::Schema.define(version: 2021_06_21_155000) do
 
   add_foreign_key "literals", "literatures"
   add_foreign_key "report_templates", "attachments"
+  add_foreign_key "research_plans", "screens"
 
   create_function :user_instrument, sql_definition: <<-SQL
       CREATE OR REPLACE FUNCTION public.user_instrument(user_id integer, sc text)
