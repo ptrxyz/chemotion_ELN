@@ -1072,7 +1072,6 @@ ActiveRecord::Schema.define(version: 2021_06_21_155000) do
     t.datetime "locked_at"
     t.boolean "account_active"
     t.integer "matrix", default: 0
-    t.string "wellplate_name_prefix", default: "WP"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -1108,7 +1107,6 @@ ActiveRecord::Schema.define(version: 2021_06_21_155000) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.string "short_label"
-    t.integer "created_by"
     t.index ["deleted_at"], name: "index_wellplates_on_deleted_at"
   end
 
