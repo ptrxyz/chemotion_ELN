@@ -277,7 +277,7 @@ export default class DetailsTabLiteratures extends Component {
   fetchDOIMetadata(doi) {
     NotificationActions.removeByUid('literature');
     LoadingActions.start();
-    Cite.inputAsync(sanitizeDoi(doi)).then((json) => {
+    Cite.async(sanitizeDoi(doi)).then((json) => {
       LoadingActions.stop();
       if (json[0]) {
         const citation = new Cite(json[0]);
