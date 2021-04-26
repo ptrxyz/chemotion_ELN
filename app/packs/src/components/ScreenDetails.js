@@ -60,6 +60,10 @@ export default class ScreenDetails extends Component {
     }
   }
 
+  onTabPositionChanged(visible) {
+    this.setState({ visible });
+  }
+
   handleSubmit() {
     const { screen } = this.state;
 
@@ -276,10 +280,6 @@ export default class ScreenDetails extends Component {
     this.setState({
       activeTab: eventKey
     });
-  }
-
-  onTabPositionChanged(visible) {
-    this.setState({ visible });
   }
 
   render() {
