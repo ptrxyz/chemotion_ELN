@@ -299,8 +299,8 @@ export default class ScreenDetails extends Component {
           />
         </Tab>
       ),
-      researchPlans: (
-        <Tab eventKey="researchPlans" title="Research Plans" key={`analyses_${screen.id}`}>
+      research_plans: (
+        <Tab eventKey="researchPlans" title="Research Plans" key={`research_plans_${screen.id}`}>
           <ScreenResearchPlans
             researchPlans={screen.research_plans}
             dropResearchPlan={researchPlan => this.dropResearchPlan(researchPlan)}
@@ -311,6 +311,9 @@ export default class ScreenDetails extends Component {
     };
 
     const tabTitlesMap = {
+      properties: 'Properties',
+      analyses: 'Analyses',
+      research_plans: 'Research Plans',
     };
 
     addSegmentTabs(screen, this.handleSegmentsChange, tabContentsMap);
