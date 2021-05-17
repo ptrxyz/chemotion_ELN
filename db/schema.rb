@@ -1148,6 +1148,7 @@ ActiveRecord::Schema.define(version: 2022_01_16_164546) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.string "short_label"
+    t.jsonb "readout_titles", default: ["Readout"]
     t.index ["deleted_at"], name: "index_wellplates_on_deleted_at"
   end
 
@@ -1163,6 +1164,7 @@ ActiveRecord::Schema.define(version: 2022_01_16_164546) do
     t.datetime "deleted_at"
     t.string "label", default: "Molecular structure", null: false
     t.string "color_code"
+    t.jsonb "readouts", default: [{"unit"=>"", "value"=>""}]
     t.index ["deleted_at"], name: "index_wells_on_deleted_at"
     t.index ["sample_id"], name: "index_wells_on_sample_id"
     t.index ["wellplate_id"], name: "index_wells_on_wellplate_id"
