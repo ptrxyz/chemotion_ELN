@@ -27,6 +27,7 @@ class Well < ApplicationRecord
   belongs_to :sample
 
   include Tagging
+  # TODO: fix validator for sample
 
   def self.get_samples_in_wellplates(wellplate_ids)
     where(wellplate_id: wellplate_ids).pluck(:sample_id).compact.uniq
