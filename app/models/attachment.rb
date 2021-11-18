@@ -55,6 +55,10 @@ class Attachment < ApplicationRecord
   belongs_to :attachable, polymorphic: true, optional: true
   has_one :report_template
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> Add a change history /w logidze
 =======
 
 >>>>>>> Add a change history /w logidze
