@@ -1,8 +1,7 @@
 class DetailLevels::Well
   def base_attributes
     [
-      :id, :position, :readout, :additive, :type, :label, :color_code,
-      :readouts, :additive, :type
+      :id, :position, :readouts, :additive, :type, :label, :color_code
     ]
   end
 
@@ -13,6 +12,6 @@ class DetailLevels::Well
   end
 
   def level1_attributes
-    level0_attributes + [:readout, :readouts]
+    level0_attributes + [:readouts]
   end
 end
