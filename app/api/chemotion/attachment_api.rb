@@ -102,29 +102,45 @@ module Chemotion
           attach_ary = []
           rp_attach_ary = []
           params[:files].each do |file|
-            if (tempfile = file[:tempfile])
-              a = Attachment.new(
-                bucket: file[:container_id],
-                filename: file[:filename],
-                file_path: file[:tempfile],
-                created_by: current_user.id,
-                created_for: current_user.id,
-                content_type: file[:type],
-                attachable_type: attachable_type,
-                attachable_id: attachable_id
-              )
-              begin
-                a.save!
-                attach_ary.push(a.id)
-                rp_attach_ary.push(a.id) if %w[ResearchPlan Element].include?(attachable_type)
-              ensure
-                tempfile.close
-                tempfile.unlink
-              end
+            next unless (tempfile = file[:tempfile])
+
+            a = Attachment.new(
+              bucket: file[:container_id],
+              filename: file[:filename],
+              file_path: file[:tempfile],
+              created_by: current_user.id,
+              created_for: current_user.id,
+              content_type: file[:type],
+              attachable_type: attachable_type,
+              attachable_id: attachable_id
+            )
+            begin
+              a.save!
+              attach_ary.push(a.id)
+              rp_attach_ary.push(a.id) if a.attachable_type.in?(%w[Element ResearchPlan Wellplate])
+            ensure
+              tempfile.close
+              tempfile.unlink
             end
           end
-          TransferThumbnailToPublicJob.set(queue: "transfer_thumbnail_to_public_#{current_user.id}").perform_later(rp_attach_ary) unless rp_attach_ary.empty?
-          TransferFileFromTmpJob.set(queue: "transfer_file_from_tmp_#{current_user.id}").perform_later(attach_ary) unless attach_ary.empty?
+
+          if rp_attach_ary.any?
+            # TransferThumbnailToPublicJob.perform_now(rp_attach_ary)
+            TransferThumbnailToPublicJob.set(queue: "transfer_thumbnail_to_public_#{current_user.id}")
+                                        .perform_later(rp_attach_ary)
+          end
+          if attach_ary.any?
+            TransferFileFromTmpJob.set(queue: "transfer_file_from_tmp_#{current_user.id}")
+                                  .perform_later(attach_ary)
+          end
+        end
+        if params.fetch(:del_files, []).any?
+          Attachment.where('id IN (?) AND attachable_type = (?)', params[:del_files].map!(&:to_i), attachable_type).update_all(attachable_id: nil)
+          if params[:attachable_type].in?(%w[ResearchPlan Wellplate])
+            Attachment.find_by(attachable_type: params[:attachable_type], attachable_id: params[:attachable_id])
+            params[:attachable_type].constantize.find(params[:attachable_id])
+            # rp.update!(thumb_svg: a.nil?? nil : '/images/thumbnail/' + a.identifier)
+          end
         end
         Attachment.where('id IN (?) AND attachable_type = (?)', params[:del_files].map!(&:to_i), attachable_type).update_all(attachable_id: nil) unless params[:del_files].empty?
         true
