@@ -164,7 +164,9 @@ yarn-debug.log*
 #welcome message
 /public/welcome-message.md
 
+# ignore vendor files
 vendor/bundle/*
 vendor/cache/*
+
 .idea/*
 .devcontainer
