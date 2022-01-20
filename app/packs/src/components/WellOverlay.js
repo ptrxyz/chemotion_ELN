@@ -9,139 +9,10 @@ import {
   Col, InputGroup, ButtonGroup
 } from 'react-bootstrap';
 import SVG from 'react-inlinesvg';
-import Aviator from 'aviator';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { CirclePicker } from 'react-color';
 import { wellplateShowSample } from './routesUtils';
-
-
-const content = (
-  well, readoutTitles, removeSampleFromWell, handleWellLabel,
-  handleColorPicker, selectedColor, saveColorCode
-) => {
-  const { sample, readouts } = well;
-
-  const bcStyle = {
-    backgroundColor: selectedColor || well.color_code
-  };
-  const wellLabels = well.label ? well.label.split(',') : [];
-  const isDisable = () => wellLabels.some(item => item === 'Molecular structure');
-
-  const labels = [{
-    label: 'Name',
-    value: 'Name',
-    disabled: isDisable()
-  }, {
-    label: 'External label',
-    value: 'External label',
-    disabled: isDisable()
-  }, {
-    label: 'Molecular structure',
-    value: 'Molecular structure',
-    disabled: (wellLabels.some(item => item !== 'Molecular structure'))
-  }];
-
-  return(
-    <div style={{width: 220, height: 850}}>
-      {renderWellContent(well, removeSampleFromWell)}
-      <div>
-        <hr style={{marginTop: 28, marginBottom: 10}}/>
-        <Select
-          id="label"
-          name="label"
-          multi
-          options={labels}
-          value={well.label}
-          onChange={e => handleWellLabel(e)}
-        />
-        &nbsp;
-        <FormGroup>
-          {readouts && readouts.map((readout, index) => (
-            <div key={`readout_${readout.id}`}>
-              <ControlLabel>{readoutTitles[index]}</ControlLabel>
-              <InputGroup>
-                <FormControl
-                  type="text"
-                  value={readout.value}
-                  disabled
-                  placeholder="Value"
-                />
-                <InputGroup.Addon disabled>{readout.unit}</InputGroup.Addon>
-              </InputGroup>
-            </div>
-          ))}
-        </FormGroup>
-        <FormGroup style={{ display: 'none' }}>
-          <ControlLabel>Imported Readout</ControlLabel>
-          <FormControl 
-             componentClass="textarea"
-             disabled
-             value={sampleImportedReadout(sample) || ''}
-             style={{ height: 50 }}
-          />
-        </FormGroup>
-        <FormGroup style={{ top: '50px' }} controlId="colorInput">
-          <Col componentClass={ControlLabel} sm={3}>
-            Select Color
-          </Col>
-          <Col sm={9}>
-            <InputGroup>
-              <InputGroup.Addon style={bcStyle}></InputGroup.Addon>
-              <FormControl
-                type="text"
-                readOnly
-                value={selectedColor || well.color_code}
-              />
-            </InputGroup>
-          </Col>
-        </FormGroup>
-        <FormGroup controlId="formHorizontalPicker">
-          <Col sm={12}>
-            <CirclePicker width="132%" onChangeComplete={e => handleColorPicker(e)} />
-          </Col>
-        </FormGroup>
-        <ButtonGroup style={{ top: '10px', bottom: '10px' }}>
-          <Button style={{ left: '80px' }} onClick={saveColorCode}>Save</Button>
-        </ButtonGroup>
-      </div>
-    </div>
-  )
-}
-
-const title = handleClose => (
-  <div>
-    Well Details
-    <span className="pull-right" style={{ marginRight: -8, marginTop: -3 }}>
-      <Button bsSize="xsmall" onClick={() => handleClose()}>
-        <i className="fa fa-times" />
-      </Button>
-    </span>
-  </div>
-);
-
-const handleSampleClick = (sample) => {
-  const { params, uri } = Aviator.getCurrentRequest();
-  Aviator.navigate(`${uri}/sample/${sample.id}`, { silent: true });
-  wellplateShowSample({ params: { ...params, sampleID: sample.id } });
-};
-
-
-const sampleName = (sample) => {
-  if (sample) {
-    const { name, external_label, short_label } = sample;
-    const sampleNameLabel = `${name || ''} ${external_label || ''} ${short_label || ''}`;
-    if (sample.isNew) {
-      return sampleNameLabel;
-    }
-    return (
-      <a onClick={() => handleSampleClick(sample)} style={{ cursor: 'pointer' }}>
-        {sampleNameLabel}
-      </a>
-    );
-  }
-  return (<div />);
-};
 
 const renderWellContent = (well, removeSampleFromWell) => {
   const { sample } = well;
@@ -184,6 +55,132 @@ const renderWellContent = (well, removeSampleFromWell) => {
 };
 
 const sampleImportedReadout = sample => (sample ? sample.imported_readout : '');
+
+const content = (
+  well, readoutTitles, removeSampleFromWell, handleWellLabel,
+  handleColorPicker, selectedColor, saveColorCode
+) => {
+  const { sample, readouts } = well;
+  const bcStyle = {
+    backgroundColor: selectedColor || well.color_code
+  };
+  const wellLabels = well.label ? well.label.split(',') : [];
+  const isDisable = () => wellLabels.some(item => item === 'Molecular structure');
+
+  const labels = [{
+    label: 'Name',
+    value: 'Name',
+    disabled: isDisable()
+  }, {
+    label: 'External label',
+    value: 'External label',
+    disabled: isDisable()
+  }, {
+    label: 'Molecular structure',
+    value: 'Molecular structure',
+    disabled: (wellLabels.some(item => item !== 'Molecular structure'))
+  }];
+
+  return(
+    <div style={{ width: 220, height: 850 }}>
+      {renderWellContent(well, removeSampleFromWell)}
+      <div>
+        <hr style={{ marginTop: 28, marginBottom: 10 }}/>
+        <Select
+          id="label"
+          name="label"
+          multi
+          options={labels}
+          value={well.label}
+          onChange={e => handleWellLabel(e)}
+        />
+        &nbsp;
+        <FormGroup>
+          {readouts && readouts.map((readout, index) => (
+            <div key={`readout_${readout.id}`}>
+              <ControlLabel>{readoutTitles[index]}</ControlLabel>
+              <InputGroup>
+                <FormControl
+                  type="text"
+                  value={readout.value}
+                  disabled
+                  placeholder="Value"
+                />
+                <InputGroup.Addon disabled>{readout.unit}</InputGroup.Addon>
+              </InputGroup>
+            </div>
+          ))}
+        </FormGroup>
+        <FormGroup style={{ display: 'none' }}>
+          <ControlLabel>Imported Readout</ControlLabel>
+          <FormControl
+            componentClass="textarea"
+            disabled
+            value={sampleImportedReadout(sample) || ''}
+            style={{ height: 50 }}
+          />
+        </FormGroup>
+        <FormGroup style={{ top: '50px' }} controlId="colorInput">
+          <Col componentClass={ControlLabel} sm={3}>
+            Select Color
+          </Col>
+          <Col sm={9}>
+            <InputGroup>
+              <InputGroup.Addon style={bcStyle} />
+              <FormControl
+                type="text"
+                readOnly
+                value={selectedColor || well.color_code}
+              />
+            </InputGroup>
+          </Col>
+        </FormGroup>
+        <FormGroup controlId="formHorizontalPicker">
+          <Col sm={12}>
+            <CirclePicker width="132%" onChangeComplete={e => handleColorPicker(e)} />
+          </Col>
+        </FormGroup>
+        <ButtonGroup style={{ top: '10px', bottom: '10px' }}>
+          <Button style={{ left: '80px' }} onClick={saveColorCode}>Save</Button>
+        </ButtonGroup>
+      </div>
+    </div>
+  );
+};
+
+const title = handleClose => (
+  <div>
+    Well Details
+    <span className="pull-right" style={{ marginRight: -8, marginTop: -3 }}>
+      <Button bsSize="xsmall" onClick={() => handleClose()}>
+        <i className="fa fa-times" />
+      </Button>
+    </span>
+  </div>
+);
+
+const handleSampleClick = (sample) => {
+  const { params, uri } = Aviator.getCurrentRequest();
+  Aviator.navigate(`${uri}/sample/${sample.id}`, { silent: true });
+  wellplateShowSample({ params: { ...params, sampleID: sample.id } });
+};
+
+
+const sampleName = (sample) => {
+  if (sample) {
+    const { name, external_label, short_label } = sample;
+    const sampleNameLabel = `${name || ''} ${external_label || ''} ${short_label || ''}`;
+    if (sample.isNew) {
+      return sampleNameLabel;
+    }
+    return (
+      <a onClick={() => handleSampleClick(sample)} style={{ cursor: 'pointer' }}>
+        {sampleNameLabel}
+      </a>
+    );
+  }
+  return (<div />);
+};
 
 const WellOverlay = ({
   show, well, readoutTitles, placement, target, handleClose, removeSampleFromWell, handleWellLabel, handleColorPicker, selectedColor, saveColorCode}) => {
