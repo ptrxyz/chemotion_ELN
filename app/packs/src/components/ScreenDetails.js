@@ -4,7 +4,6 @@ import {
   FormGroup, ControlLabel, FormControl, Panel, ListGroup, ListGroupItem,
   ButtonToolbar, Button, Tooltip, OverlayTrigger, Tabs, Tab
 } from 'react-bootstrap';
-// import StickyDiv from 'react-stickydiv';
 import { unionBy, findIndex } from 'lodash';
 import Immutable from 'immutable';
 
@@ -52,6 +51,12 @@ export default class ScreenDetails extends Component {
 
   componentWillUnmount() {
     UIStore.unlisten(this.onUIStoreChange);
+  }
+
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { screen } = nextProps;
+    this.setState({ screen });
   }
 
   onUIStoreChange(state) {

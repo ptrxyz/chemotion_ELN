@@ -16,26 +16,12 @@ import { CirclePicker } from 'react-color';
 import { wellplateShowSample } from './routesUtils';
 
 
-const WellOverlay = ({
-  show, well, readoutTitles, placement, target, handleClose, removeSampleFromWell, handleWellLabel, handleColorPicker, selectedColor, saveColorCode}) => {
-  return (
-    <Overlay
-      rootClose
-      show={show}
-      target={target}
-      placement={placement}
-      onHide={() => handleClose()}
-    >
-      <Popover title={title(handleClose)} id={'wellpop'+well.id}>
-        {content(well, readoutTitles, removeSampleFromWell, handleWellLabel, handleColorPicker, selectedColor, saveColorCode)}
-      </Popover>
-    </Overlay>
-  );
-}
-
 const content = (
-  well, readoutTitles, removeSampleFromWell, handleWellLabel, handleColorPicker, selectedColor, saveColorCode) => {
+  well, readoutTitles, removeSampleFromWell, handleWellLabel,
+  handleColorPicker, selectedColor, saveColorCode
+) => {
   const { sample, readouts } = well;
+
   const bcStyle = {
     backgroundColor: selectedColor || well.color_code
   };
@@ -72,7 +58,7 @@ const content = (
         &nbsp;
         <FormGroup>
           {readouts && readouts.map((readout, index) => (
-            <div key={`readout_${index}`}>
+            <div key={`readout_${readout.id}`}>
               <ControlLabel>{readoutTitles[index]}</ControlLabel>
               <InputGroup>
                 <FormControl
@@ -140,6 +126,7 @@ const handleSampleClick = (sample) => {
   wellplateShowSample({ params: { ...params, sampleID: sample.id } });
 };
 
+
 const sampleName = (sample) => {
   if (sample) {
     const { name, external_label, short_label } = sample;
@@ -197,6 +184,23 @@ const renderWellContent = (well, removeSampleFromWell) => {
 };
 
 const sampleImportedReadout = sample => (sample ? sample.imported_readout : '');
+
+const WellOverlay = ({
+  show, well, readoutTitles, placement, target, handleClose, removeSampleFromWell, handleWellLabel, handleColorPicker, selectedColor, saveColorCode}) => {
+  return (
+    <Overlay
+      rootClose
+      show={show}
+      target={target}
+      placement={placement}
+      onHide={() => handleClose()}
+    >
+      <Popover title={title(handleClose)} id={`wellpop${well.id}`}>
+        {content(well, readoutTitles, removeSampleFromWell, handleWellLabel, handleColorPicker, selectedColor, saveColorCode)}
+      </Popover>
+    </Overlay>
+  );
+}
 
 WellOverlay.propTypes = {
   show: PropTypes.bool.isRequired,
