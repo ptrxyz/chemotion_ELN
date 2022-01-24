@@ -118,6 +118,12 @@ describe Chemotion::ResearchPlanAPI do
 
         names = columns.map { |column| column['name'] }
         expect(names).to eq ['X, Y', 'Readout 1', 'Readout 2', 'Readout 3']
+
+        first_row = rows.first
+        first_readout = wellplate.wells.first.readouts.first
+        expected_value = "#{first_readout['value']} #{first_readout['unit']}"
+
+        expect(first_row['readout_1']).to eq expected_value
       end
     end
   end

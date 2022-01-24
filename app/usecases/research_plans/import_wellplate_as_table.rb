@@ -52,7 +52,7 @@ module Usecases
         wellplate.wells.sort_by { |well| [well.position_x, well.position_y] }.each do |well|
           row = { wellplate_position: "#{well.position_x}, #{well.position_y}" }
           well.readouts.each_with_index do |readout, index|
-            row["readout_#{index + 1}"] = "#{readout[:value]} #{readout[:unit]}"
+            row["readout_#{index + 1}"] = "#{readout['value']} #{readout['unit']}"
           end
           rows << row
         end

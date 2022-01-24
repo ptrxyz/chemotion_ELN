@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Usecases::Wellplates::ExportToResearchPlan do
+RSpec.describe Usecases::ResearchPlans::ImportWellplateAsTable do
   let(:user) { build(:user) }
   let(:wellplate) { build(:wellplate, :with_random_wells, number_of_readouts: 3) }
   let(:research_plan) { build(:research_plan, creator: user) }
