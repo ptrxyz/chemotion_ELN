@@ -97,7 +97,7 @@ const content = (
         &nbsp;
         <FormGroup>
           {readouts && readouts.map((readout, index) => (
-            <div key={`readout_${readout.id}`}>
+            <div key={`readout_${index}`}>
               <ControlLabel>{readoutTitles[index]}</ControlLabel>
               <InputGroup>
                 <FormControl
@@ -182,8 +182,11 @@ const sampleName = (sample) => {
   return (<div />);
 };
 
+
 const WellOverlay = ({
-  show, well, readoutTitles, placement, target, handleClose, removeSampleFromWell, handleWellLabel, handleColorPicker, selectedColor, saveColorCode}) => {
+  show, well, readoutTitles, placement, target, handleClose, removeSampleFromWell,
+  handleWellLabel, handleColorPicker, selectedColor, saveColorCode
+}) => {
   return (
     <Overlay
       rootClose
