@@ -17,22 +17,32 @@ RSpec.describe Usecases::ResearchPlans::ImportWellplateAsTable do
       table = research_plan.body.last['value']
 
       expect(table['rows'].size).to eq 12 * 8
-      expect(table['columns'].size).to eq 4 # coordinate + 3 readouts
+      expect(table['columns'].size).to eq 8 # coordinate + sample + (3 readouts * fields)
 
       names = table['columns'].map { |column| column['name'] }
-      expect(names).to eq ['X, Y', 'Readout 1', 'Readout 2', 'Readout 3']
+      expect(names).to eq [
+        'Position',
+        'Sample',
+        'Readout 1 Value',
+        'Readout 1 Unit',
+        'Readout 2 Value',
+        'Readout 2 Unit',
+        'Readout 3 Value',
+        'Readout 3 Unit',
+      ]
 
       last_row = table['rows'].last
       last_well = wellplate
                   .wells
                   .find { |well| well.position_x ==  12 &&  well.position_y == 8 } # wellplate and wells are not persisted
 
-      expected_readouts = last_well.readouts.map do |readout|
-        readout['value'].to_s + ' ' + readout['unit'].to_s
-      end
-      expect(last_row['readout_1']).to eq expected_readouts.first
-      expect(last_row['readout_2']).to eq expected_readouts.second
-      expect(last_row['readout_3']).to eq expected_readouts.third
+      expect(last_row['position']).to eq 'I12'
+      expect(last_row['readout_1_value']).to eq last_well.readouts.first['value']
+      expect(last_row['readout_1_unit']).to eq last_well.readouts.first['unit']
+      expect(last_row['readout_2_value']).to eq last_well.readouts.second['value']
+      expect(last_row['readout_2_unit']).to eq last_well.readouts.second['unit']
+      expect(last_row['readout_3_value']).to eq last_well.readouts.third['value']
+      expect(last_row['readout_3_unit']).to eq last_well.readouts.third['unit']
     end
   end
 end

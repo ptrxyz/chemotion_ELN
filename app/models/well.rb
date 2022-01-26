@@ -38,4 +38,13 @@ class Well < ApplicationRecord
   def readouts
     read_attribute(:readouts) || []
   end
+
+  # translates well position within wellplate: X=2 Y=3 -> C2
+  def alphanumeric_position
+    return 'n/a' if position_x.nil? || position_y.nil?
+
+    row = ('A'..'Z').to_a[position_y]
+
+    "#{row}#{position_x}"
+  end
 end

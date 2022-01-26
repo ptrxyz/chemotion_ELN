@@ -20,6 +20,8 @@ module Usecases
         {
           id: SecureRandom.uuid,
           type: :table,
+          title: wellplate.name || "Wellplate #{wellplate.id}",
+          wellplate_id: wellplate.id,
           value: {
             rows: convert_rows(wellplate),
             columns: convert_columns(wellplate)
@@ -31,17 +33,20 @@ module Usecases
 
       def convert_columns(wellplate)
         columns = [
-          { key: :wellplate_position, name: "X, Y", width: 50, editable: false, resizable: true }
+          { key: :wellplate_position, name: 'Position', width: 50, editable: false, resizable: true },
+          { key: :sample, name: 'Sample', width: 75, editable: false, resizable: true }
         ]
 
         wellplate.readout_titles.each_with_index do |readout_title, index|
-          columns << {
-            key: "readout_#{index + 1}",
-            name: readout_title,
-            width: 100,
-            editable: true,
-            resizable: true
-          }
+          %w[value unit].each do |column_suffix|
+            columns << {
+              key: "readout_#{index + 1}_#{column_suffix}",
+              name: [readout_title, column_suffix.capitalize].join(' '),
+              width: 100,
+              editable: true,
+              resizable: true
+            }
+          end
         end
 
         columns
@@ -50,9 +55,17 @@ module Usecases
       def convert_rows(wellplate)
         rows = []
         wellplate.wells.sort_by { |well| [well.position_x, well.position_y] }.each do |well|
-          row = { wellplate_position: "#{well.position_x}, #{well.position_y}" }
+          next unless well.sample
+
+          row = {
+            wellplate_position: well.alphanumeric_position,
+            sample: well.sample.name
+          }
           well.readouts.each_with_index do |readout, index|
-            row["readout_#{index + 1}"] = "#{readout['value']} #{readout['unit']}"
+            next if [readout['value'], readout['unit']].any?(&:blank?)
+
+            row["readout_#{index + 1}_value"] = readout['value']
+            row["readout_#{index + 1}_unit"] = readout['unit']
           end
           rows << row
         end

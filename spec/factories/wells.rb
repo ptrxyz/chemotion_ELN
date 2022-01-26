@@ -5,6 +5,7 @@ FactoryBot.define do
     position_x { 0 }
     position_y { 0 }
     wellplate
+    sample
     readouts do
       [
         {
