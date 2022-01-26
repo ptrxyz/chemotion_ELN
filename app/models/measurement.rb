@@ -25,5 +25,5 @@
 class Measurement < ApplicationRecord
   acts_as_paranoid # TODO: klären ob benötigt
   belongs_to :well, optional: true
-  belongs_to :sample, optional: true
+  belongs_to :sample, optional: false
 end

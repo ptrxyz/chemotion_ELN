@@ -7,7 +7,7 @@ class CreateMeasurements < ActiveRecord::Migration[5.2]
       t.datetime :deleted_at, index: true
 
       t.belongs_to :well, index: true, null: true
-      t.belongs_to :sample, index: true, null: true
+      t.belongs_to :sample, index: true, null: false
       t.timestamps null: false
     end
   end
