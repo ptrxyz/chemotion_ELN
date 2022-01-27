@@ -2,7 +2,7 @@
 
 module Usecases
   module Measurements
-    class CreateFromWell
+    class BulkCreateFromWell
       attr_reader :well
 
       def initialize(well)
@@ -10,7 +10,10 @@ module Usecases
       end
 
       def execute!
+        return unless well.sample
         measurements = well.readouts.map.with_index do |readout, index|
+          next if [readout['value'], readout['unit']].any?(&:blank?)
+
           {
             description: well.wellplate.readout_titles[index],
             sample: well.sample,
@@ -18,9 +21,9 @@ module Usecases
             value: readout['value'],
             well: well
           }
-        end
+        end.compact
 
-        Measurement.create!(measurements)
+        Measurement.create!(measurements) if measurements.any?
       end
     end
   end
