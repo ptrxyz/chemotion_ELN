@@ -20,7 +20,7 @@
 #  updated_at           :datetime         not null
 #  template             :string           default("standard")
 #  mol_serials          :text             default([])
-#  si_reaction_settings :text             default({"Name"=>true, "CAS"=>true, "Formula"=>true, "Smiles"=>true, "InCHI"=>true, "Molecular Mass"=>true, "Exact Mass"=>true, "EA"=>true})
+#  si_reaction_settings :text             default({:Name=>true, :CAS=>true, :Formula=>true, :Smiles=>true, :InCHI=>true, :"Molecular Mass"=>true, :"Exact Mass"=>true, :EA=>true})
 #  prd_atts             :text             default([])
 #  report_templates_id  :integer
 #
@@ -55,7 +55,7 @@ class Report < ApplicationRecord
   def create_docx
     template = self.template
 
-    if report_templates_id
+    if ReportTemplate.where(id: report_templates_id).present?
       report_template = ReportTemplate.includes(:attachment).find(report_templates_id)
       template = report_template.report_type
       tpl_path = if report_template.attachment
