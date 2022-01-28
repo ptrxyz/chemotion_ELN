@@ -13,7 +13,7 @@ module Import
 
       @rows = []
       @error_messages = []
-      @letters = ('A'..'Z').to_a
+      @letters = [*'A'..'Z']
       @position_index = 0
       @sample_index = 1
       @readout_index = 4

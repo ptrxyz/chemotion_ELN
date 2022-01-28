@@ -135,6 +135,10 @@ class Wellplate < ApplicationRecord
     subwellplate
   end
 
+  def ordered_wells
+    wells.order(position_y: :asc, position_x: :asc)
+  end
+
   def set_short_label(user:) # rubocop:disable Naming/AccessorMethodName
     prefix = 'WP'
     counter = user.increment_counter 'wellplates'
