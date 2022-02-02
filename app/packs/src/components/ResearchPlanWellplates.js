@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import { Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { DropTarget } from 'react-dnd';
 import Aviator from 'aviator';
 import DragDropItemTypes from './DragDropItemTypes';
 import UIStore from './stores/UIStore';
 import { wellplateShowOrNew } from './routesUtils';
-import QuillViewer from './QuillViewer';
-// import Wellplate from './models/Wellplate';
+import EmbeddedWellplate from './EmbeddedWellplate';
+import Wellplate from './models/Wellplate';
 
 const target = {
   drop(props, monitor) {
@@ -46,62 +45,25 @@ class ResearchPlanWellplates extends Component {
     };
     if (isOver) { style.borderColor = '#337ab7'; }
 
-    return connectDropTarget( // eslint-disable-line function-paren-newline
-      <div style={style}>
-        Drop Wellplate here to add.
-      </div>);
+    return connectDropTarget(<div style={style}>Drop Wellplate here to add.</div>);
   }
 
 
   render() {
-    const { wellplates, deleteWellplate } = this.props;
+    const { wellplates, deleteWellplate, importWellplate } = this.props;
 
     return (
       <div>
         {this.renderDropZone()}
 
-        <table width="100%">
-          <thead>
-            <tr>
-              <th width="45%">Name</th>
-              <th width="50%">Description</th>
-              <th width="5%" />
-            </tr>
-          </thead>
-          <tbody>
-            {wellplates && wellplates.map(wellplate => (
-              // <div key={wellplate.id}>
-              //   {wellplate.name}<br />
-              // </div>
-              <tr key={wellplate.id} style={{ height: '80px', verticalAlign: 'middle' }}>
-                <td>
-                  <a
-                    onClick={() => this.handleWellplateClick(wellplate)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {wellplate.name}
-                  </a>
-                </td>
-                <td>
-                  <QuillViewer
-                    value={wellplate.description}
-                    theme="bubble"
-                    height="44px"
-                  />
-                </td>
-                <td style={{ verticalAlign: 'middle' }}>
-                  <Button
-                    bsStyle="danger"
-                    style={{ marginLeft: '10px' }}
-                    onClick={() => deleteWellplate(wellplate)}
-                  >
-                    <i className="fa fa-trash-o" />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {wellplates && wellplates.map(wellplate => (
+          <EmbeddedWellplate
+            key={`${wellplate.name}-${wellplate.id}`}
+            wellplate={new Wellplate(wellplate)}
+            deleteWellplate={deleteWellplate}
+            importWellplate={importWellplate}
+          />
+        ))}
       </div>);
   }
 }
@@ -111,8 +73,7 @@ export default DropTarget(DragDropItemTypes.WELLPLATE, target, collect)(Research
 ResearchPlanWellplates.propTypes = { /* eslint-disable react/no-unused-prop-types */
   wellplates: PropTypes.arrayOf(PropTypes.object).isRequired,
   deleteWellplate: PropTypes.func.isRequired,
-  // updateWellplate: PropTypes.func.isRequired,
-  // saveWellplate: PropTypes.func.isRequired,
+  importWellplate: PropTypes.func.isRequired,
   dropWellplate: PropTypes.func.isRequired,
   isOver: PropTypes.bool.isRequired,
   canDrop: PropTypes.bool.isRequired,

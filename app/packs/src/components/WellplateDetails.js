@@ -335,8 +335,7 @@ export default class WellplateDetails extends Component {
 
     };
 
-    const tabTitlesMap = {
-    }
+    const tabTitlesMap = {};
     addSegmentTabs(wellplate, this.handleSegmentsChange, tabContentsMap);
 
     const tabContents = [];
