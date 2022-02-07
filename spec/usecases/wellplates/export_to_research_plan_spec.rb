@@ -2,16 +2,17 @@
 
 require 'rails_helper'
 
-RSpec.describe Usecases::Wellplates::ExportToResearchPlan do
+#RSpec.describe Usecases::Wellplates::ExportToResearchPlan do
+RSpec.describe Usecases::ResearchPlans::ImportWellplateAsTable do
   let(:user) { build(:user) }
   let(:wellplate) { build(:wellplate, :with_random_wells, number_of_readouts: 3) }
   let(:research_plan) { build(:research_plan, creator: user) }
 
-  let(:exporter) { described_class.new(research_plan, wellplate) }
+  subject { described_class.new(research_plan, wellplate) }
 
   describe 'execute!' do
     before do
-      exporter.execute!
+      subject.execute!
     end
     it 'saves the wellplate as table to the research plan body' do
       table = research_plan.body.last['value']
