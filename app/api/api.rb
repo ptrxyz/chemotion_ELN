@@ -176,9 +176,11 @@ class API < Grape::API
   mount Chemotion::NmrdbAPI
   mount Chemotion::MeasurementsAPI
   mount Chemotion::ConverterAPI
+  mount Chemotion::TaskAPI
+
 
   add_swagger_documentation(info: {
     "title": "Chemotion ELN",
     "version": "1.0"
-  }) if Rails.env.development?
+  })
 end

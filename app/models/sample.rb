@@ -208,6 +208,9 @@ class Sample < ApplicationRecord
   belongs_to :creator, foreign_key: :created_by, class_name: 'User'
   belongs_to :molecule, optional: true
 
+  has_one :task, dependent: :destroy
+
+
   accepts_nested_attributes_for :molecule_name
   accepts_nested_attributes_for :collections_samples
   accepts_nested_attributes_for :molecule, update_only: true
@@ -447,6 +450,10 @@ class Sample < ApplicationRecord
 
   def user_labels
     tag&.taggable_data&.fetch('user_labels', nil)
+  end
+
+  def task?
+    task.present?
   end
 
 private

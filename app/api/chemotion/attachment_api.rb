@@ -65,12 +65,39 @@ module Chemotion
         requires :cnt_only, type: Boolean, desc: 'return count number only'
       end
       get do
-        current_user.container = Container.create(name: 'inbox', container_type: 'root') unless current_user.container
+        if current_user
+          inbox_container = Container.where(name: 'inbox', container_type: 'root', containable_id: current_user.id).take
+          unless inbox_container
+            inbox_container = Container.create!(name: 'inbox', container_type: 'root', containable_id: current_user.id)
+          end
 
+          if params[:cnt_only]
+            present inbox_container, with: Entities::InboxEntity, root: :inbox, only: [:inbox_count]
+          else
+            present inbox_container, with: Entities::InboxEntity, root: :inbox
+          end
+        end
+      end
+    end
+
+    resource :free_scan do
+      params do
+        requires :cnt_only, type: Boolean, desc: 'return count number only'
+      end
+      get do
+        return if current_user.nil?
+
+        free_scan_root_container = Container.where(name: 'free_scan_root', container_type: 'root', containable_id: current_user.id).take
+        unless free_scan_root_container
+          current_user.container = Container.create(name: 'free_scan_root', container_type: 'root', containable_id: current_user.id)
+          free_scan_root_container = current_user.container
+        end
+
+        free_scans = Entities::FreeScanEntity.represent(free_scan_root_container)
         if params[:cnt_only]
-          present current_user.container, with: Entities::InboxEntity, root: :inbox, only: [:inbox_count]
+          { inbox: { inbox_count: free_scans.inbox_count } }
         else
-          present current_user.container, with: Entities::InboxEntity, root: :inbox
+          free_scans
         end
       end
     end

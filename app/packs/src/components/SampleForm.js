@@ -6,13 +6,14 @@ import {
   Table, Glyphicon, Tabs, Tab, OverlayTrigger, Tooltip
 } from 'react-bootstrap';
 import Select from 'react-select';
-import DetailActions from 'src/stores/alt/actions/DetailActions';
-import NumeralInputWithUnitsCompo from 'src/components/NumeralInputWithUnitsCompo';
-import TextRangeWithAddon from 'src/components/TextRangeWithAddon';
-import { solventOptions } from 'src/components/staticDropdownOptions/options';
-import SampleDetailsSolvents from 'src/components/SampleDetailsSolvents';
-import PrivateNoteElement from 'src/components/PrivateNoteElement';
-import NotificationActions from 'src/stores/alt/actions/NotificationActions';
+import DetailActions from './actions/DetailActions';
+import NumeralInputWithUnitsCompo from './NumeralInputWithUnitsCompo';
+import TextRangeWithAddon from './TextRangeWithAddon';
+import { solventOptions } from './staticDropdownOptions/options';
+import SampleDetailsSolvents from './SampleDetailsSolvents';
+import PrivateNoteElement from './PrivateNoteElement';
+import NotificationActions from './actions/NotificationActions';
+import AddTaskButton from './common/AddTaskButton';
 
 
 export default class SampleForm extends React.Component {
@@ -459,6 +460,7 @@ export default class SampleForm extends React.Component {
       <FormGroup>
         <ControlLabel>Amount</ControlLabel>
         <FormControl type="text" disabled defaultValue="***" readOnly />
+        
       </FormGroup>
     );
   }
@@ -575,6 +577,9 @@ export default class SampleForm extends React.Component {
                         <label style={{ height: '14px' }} />
                         <InputGroup.Button id="email" name="email" type="email" placeholder="Email Address">
                           {this.infoButton()}
+                        </InputGroup.Button>
+                        <InputGroup.Button style={{ paddingLeft: '5px'}} id="task" name="task" type="task" placeholder="Add Task">
+                            <AddTaskButton data={sample} disabled={sample.has_task}></AddTaskButton>
                         </InputGroup.Button>
                       </div>
                     </td>
