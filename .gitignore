@@ -148,7 +148,6 @@ tags
 tags.temp
 .vscode/*
 
-spec/examples.txt
 /spec/examples.txt
 
 # ignore vendor files

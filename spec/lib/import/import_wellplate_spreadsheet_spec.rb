@@ -86,8 +86,8 @@ RSpec.describe 'ImportWellplateSpreadsheet' do
       end
 
       expect(wellplate.wells.count).to eq 96
-      expect(wellplate.wells.pluck(:sample_id)).to eq expected_sample_ids
-      expect(wellplate.wells.pluck(:readouts)).to eq expected_readouts
+      expect(wellplate.ordered_wells.pluck(:sample_id)).to eq expected_sample_ids
+      expect(wellplate.ordered_wells.pluck(:readouts)).to eq expected_readouts
     end
   end
 end

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Panel, ListGroup, ListGroupItem, ButtonToolbar, Button, Tooltip, OverlayTrigger, Tabs, Tab, Dropdown, MenuItem } from 'react-bootstrap';
-import { unionBy } from 'lodash';
+import { unionBy, findIndex } from 'lodash';
 import Immutable from 'immutable';
-import { findIndex } from 'lodash';
 import ElementCollectionLabels from '../ElementCollectionLabels';
 import UIActions from '../actions/UIActions';
 import ElementActions from '../actions/ElementActions';
@@ -215,24 +214,36 @@ export default class ResearchPlanDetails extends Component {
     this.setState({ researchPlan });
   }
 
+  importWellplate(wellplate) {
+    const { researchPlan } = this.state;
+    researchPlan.changed = true;
+
+    // TODO: implement API call
+    console.log('import Wellplate');
+    console.log(wellplate);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   newItemByType(fieldName, value, type) {
     switch (fieldName) {
       case 'description':
         return {
           description: value,
           descriptionType: type
-        }
+        };
       case 'alternate_identifier':
         return {
           alternateIdentifier: value,
           alternateIdentifierType: type
-        }
+        };
       case 'related_identifier':
         return {
           relatedIdentifier: value,
           relatedIdentifierType: type
-        }
-      }
+        };
+      default:
+        return {};
+    }
   }
 
   handleCopyToMetadata(id, fieldName) {
@@ -240,7 +251,7 @@ export default class ResearchPlanDetails extends Component {
     const researchPlanMetadata = researchPlan.research_plan_metadata;
     const args = { research_plan_id: researchPlanMetadata.research_plan_id };
     const index = researchPlan.body.findIndex(field => field.id === id);
-    const value = researchPlan.body[index]?.value?.ops[0]?.insert?.trim() || ''
+    const value = researchPlan.body[index]?.value?.ops[0]?.insert?.trim() || '';
     if (fieldName === 'name') {
       researchPlanMetadata.title = researchPlan.name;
       args.title = researchPlan.name.trim();
@@ -248,13 +259,14 @@ export default class ResearchPlanDetails extends Component {
       researchPlanMetadata.subject = value;
       args.subject = value;
     } else {
-      const type = researchPlan.body[index]?.title?.trim() || ''
-      const newItem = this.newItemByType(fieldName, value, type)
+      const type = researchPlan.body[index]?.title?.trim() || '';
+      const newItem = this.newItemByType(fieldName, value, type);
 
-      const currentCollection = researchPlanMetadata[fieldName] ? researchPlanMetadata[fieldName] : []
-      const newCollection = currentCollection.concat(newItem)
-      researchPlanMetadata[fieldName] = newCollection
-      args[`${fieldName}`] = researchPlanMetadata[fieldName]
+      const currentCollection = researchPlanMetadata[fieldName] ?
+        researchPlanMetadata[fieldName] : [];
+      const newCollection = currentCollection.concat(newItem);
+      researchPlanMetadata[fieldName] = newCollection;
+      args[`${fieldName}`] = researchPlanMetadata[fieldName];
     }
 
     ResearchPlansFetcher.postResearchPlanMetadata(args).then((result) => {
@@ -327,7 +339,7 @@ export default class ResearchPlanDetails extends Component {
     );
   } /* eslint-enable */
 
-  renderPropertiesTab(researchPlan, update) {
+  renderPropertiesTab(researchPlan, update) { /* eslint-disable react/jsx-no-bind */
     const { name, body } = researchPlan;
     return (
       <ListGroup fill="true">
@@ -362,7 +374,7 @@ export default class ResearchPlanDetails extends Component {
         </ListGroupItem>
       </ListGroup>
     );
-  }
+  } /* eslint-enable */
 
   renderAnalysesTab(researchPlan) {
     return (
@@ -463,7 +475,8 @@ export default class ResearchPlanDetails extends Component {
             wellplates={researchPlan.wellplates}
             dropWellplate={wellplate => this.dropWellplate(wellplate)}
             deleteWellplate={wellplate => this.deleteWellplate(wellplate)}
-            />
+            importWellplate={wellplate => this.importWellplate(wellplate)}
+          />
         </Tab>
       ),
       metadata: (
