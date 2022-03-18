@@ -10,7 +10,7 @@
 #  unit        :string           not null
 #  deleted_at  :datetime
 #  well_id     :bigint
-#  sample_id   :bigint
+#  sample_id   :bigint           not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #

@@ -595,7 +595,7 @@ ActiveRecord::Schema.define(version: 2022_01_23_122040) do
     t.string "unit", null: false
     t.datetime "deleted_at"
     t.bigint "well_id"
-    t.bigint "sample_id"
+    t.bigint "sample_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_measurements_on_deleted_at"

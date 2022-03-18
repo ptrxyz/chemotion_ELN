@@ -333,6 +333,12 @@ export default class ResearchPlanDetails extends Component {
             onCopyToMetadata={this.handleCopyToMetadata.bind(this)}
             update={update}
             edit={edit}
+            copyableFields={[
+              { title: 'Subject', fieldName: 'subject' },
+              { title: 'Alternate Identifier', fieldName: 'alternate_identifier' },
+              { title: 'Related Identifier', fieldName: 'related_identifier' },
+              { title: 'Description', fieldName: 'description' }
+            ]}
           />
         </ListGroupItem>
       </ListGroup>
