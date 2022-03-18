@@ -25,7 +25,7 @@ RUN apt update && apt-get install -yqq --fix-missing bash ca-certificates wget a
       fonts-crosextra-caladea fonts-crosextra-carlito \
       fonts-dejavu fonts-dejavu-core fonts-dejavu-extra fonts-liberation2 fonts-liberation \
       fonts-linuxlibertine fonts-noto-core fonts-noto-extra fonts-noto-ui-core \
-      fonts-opensymbol fonts-sil-gentium fonts-sil-gentium-basic 
+      fonts-opensymbol fonts-sil-gentium fonts-sil-gentium-basic
 RUN  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list \
     && apt-get update -yqqq && apt-get -y install google-chrome-stable \
@@ -57,7 +57,7 @@ RUN asdf install nodejs $VNODENEXT
 RUN asdf global nodejs $VNODE
 
 RUN asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-RUN asdf install ruby $VRUBY 
+RUN asdf install ruby $VRUBY
 RUN asdf global ruby $VRUBY
 
 RUN mkdir -p shared/node_modules
@@ -69,6 +69,7 @@ COPY Gemfile.lock /home/chemotion-dev/
 COPY package.json /home/chemotion-dev/
 COPY package_postinstall.sh /home/chemotion-dev/
 COPY yarn.lock /home/chemotion-dev/
+RUN echo 'network-timeout 600000' > /home/chemotion-dev/.yarnrc
 RUN sudo chmod 666 Gemfile.lock
 RUN sudo chmod 666 yarn.lock
 
@@ -80,4 +81,4 @@ RUN /bin/bash -l -c "gem install bundler -v 1.17.3 && bundle install "
 RUN sudo apt-get -y --autoremove --fix-missing install \
     libboost-serialization1.71.0 \
     libboost-iostreams1.71.0 \
-    libboost-system1.71.0 
+    libboost-system1.71.0
