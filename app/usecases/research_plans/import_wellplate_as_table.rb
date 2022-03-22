@@ -32,16 +32,28 @@ module Usecases
       private
 
       def convert_columns(wellplate)
+        # NOTES:
+        # colId could be omitted according to the AgGrid API, but ResearchPlanDetailsFieldTable uses it to hardcode a key
+        # field defines which row field is used to fetch the data
+        #
+        # see https://www.ag-grid.com/javascript-data-grid/column-properties/ for more information
         columns = [
-          { key: :wellplate_position, name: 'Position', width: 50, editable: false, resizable: true },
-          { key: :sample, name: 'Sample', width: 75, editable: false, resizable: true }
+          {
+            colId: :wellplate_position, field: :wellplate_position,
+            headerName: 'Position', width: 50, editable: false, resizable: true
+          },
+          {
+            colId: :sample, field: :sample,
+            headerName: 'Sample', width: 75, editable: false, resizable: true
+          }
         ]
 
         wellplate.readout_titles.each_with_index do |readout_title, index|
           %w[value unit].each do |column_suffix|
             columns << {
-              key: "readout_#{index + 1}_#{column_suffix}",
-              name: [readout_title, column_suffix.capitalize].join(' '),
+              colId: "readout_#{index + 1}_#{column_suffix}",
+              field: "readout_#{index + 1}_#{column_suffix}",
+              headerName: [readout_title, column_suffix.capitalize].join(' '),
               width: 100,
               editable: true,
               resizable: true
