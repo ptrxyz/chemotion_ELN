@@ -87,7 +87,6 @@ export default class WellplateProperties extends Component {
         >
           <Button
             bsStyle="danger"
-            bsSize="xsmall"
             className="button-right"
             ref={(ref) => { this.deleteButtonRefs[index] = ref; }}
             onClick={() => this.showDeleteReadoutTitleConfirm(index)}
@@ -143,11 +142,6 @@ export default class WellplateProperties extends Component {
           <tr>
             <td colSpan={2}>
               <ControlLabel>Readout Titles</ControlLabel>
-              <OverlayTrigger placement="top" overlay={<Tooltip id="add_readout_title_tooltip">Add Readout Title</Tooltip>} >
-                <Button className="button-right" bsSize="xsmall" bsStyle="success" onClick={() => this.addReadoutTitle()}>
-                  <i className="fa fa-plus" />
-                </Button>
-              </OverlayTrigger>
             </td>
           </tr>
           {readoutTitles && readoutTitles.map((readoutTitle, index) => (
@@ -167,6 +161,15 @@ export default class WellplateProperties extends Component {
               </td>
             </tr>
           ))}
+          <tr>
+            <td colspan={2}>
+              <OverlayTrigger placement="top" overlay={<Tooltip id="add_readout_title_tooltip">Add Readout Title</Tooltip>} >
+                <Button className="button-right" bsStyle="success" onClick={() => this.addReadoutTitle()}>
+                  Add Readouts
+                </Button>
+              </OverlayTrigger>
+            </td>
+          </tr>
           <tr>
             <td colSpan="2">
               <FormGroup>
