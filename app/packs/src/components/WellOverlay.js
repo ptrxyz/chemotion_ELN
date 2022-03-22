@@ -4,6 +4,7 @@ import SVG from 'react-inlinesvg';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { CirclePicker } from 'react-color';
+import { wellplateShowSample } from './routesUtils';
 
 const sampleName = (sample) => { /* eslint-disable camelcase */
   if (sample) {
@@ -21,6 +22,12 @@ const sampleName = (sample) => { /* eslint-disable camelcase */
   }
   return (<div />);
 }; /* eslint-enable */
+
+const handleSampleClick = (sample) => {
+  const { params, uri } = Aviator.getCurrentRequest();
+  Aviator.navigate(`${uri}/sample/${sample.id}`, { silent: true });
+  wellplateShowSample({ params: { ...params, sampleID: sample.id } });
+}
 
 const renderWellContent = (well, removeSampleFromWell) => {
   const { sample } = well;
