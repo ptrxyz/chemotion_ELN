@@ -43,7 +43,7 @@ class Well < ApplicationRecord
   def alphanumeric_position
     return 'n/a' if position_x.nil? || position_y.nil?
 
-    row = ('A'..'Z').to_a[position_y]
+    row = ('A'..'Z').to_a[position_y - 1]
 
     "#{row}#{position_x}"
   end
