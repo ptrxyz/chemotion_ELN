@@ -71,7 +71,7 @@ export default class EmbeddedWellplate extends Component {
       <Tooltip placement="bottom" className="in" id="tooltip-bottom">
         Import data from Wellplate? This will create a table.<br />
         <ButtonGroup>
-          <Button bsStyle="danger" bsSize="xsmall" onClick={() => this.confirmWellplateImport()}>
+          <Button bsStyle="success" bsSize="xsmall" onClick={() => this.confirmWellplateImport()}>
             Yes
           </Button>
           <Button bsStyle="warning" bsSize="xsmall" onClick={() => this.hideImportConfirm()}>
