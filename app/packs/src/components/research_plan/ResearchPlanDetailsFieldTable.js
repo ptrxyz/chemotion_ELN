@@ -50,10 +50,12 @@ export default class ResearchPlanDetailsFieldTable extends Component {
     return {
       key: columnName,
       name: columnName,
+      headerName: columnName,
+      colId: columnName,
       editable: true,
       resizable: true,
       width: 200,
-      editor: CustomTextEditor
+      cellEditor: CustomTextEditor
     };
   }
 

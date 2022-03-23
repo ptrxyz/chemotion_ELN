@@ -60,7 +60,7 @@ export default class ResearchPlanDetailsField extends Component {
         break;
       case 'table':
         field.value.columns.forEach((item)=> {
-          item.editor = CustomTextEditor
+          item.cellEditor = CustomTextEditor
           return item;
         });
         label = 'Table';
