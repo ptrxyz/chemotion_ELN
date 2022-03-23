@@ -206,6 +206,7 @@ class ElementStore {
 
       handlefetchResearchPlanById: ElementActions.fetchResearchPlanById,
       handleCreateResearchPlan: ElementActions.createResearchPlan,
+      handleImportWellplateIntoResearchPlan: ElementActions.importWellplateIntoResearchPlan,
 
       handleCreatePrivateNote: ElementActions.createPrivateNote,
       handleUpdatePrivateNote: ElementActions.updatePrivateNote,
@@ -859,6 +860,16 @@ class ElementStore {
   handleCreateResearchPlan(research_plan) {
     this.handleRefreshElements('research_plan');
     this.navigateToNewElement(research_plan);
+  }
+
+  handleImportWellplateIntoResearchPlan(result) {
+    if (result.error) { return; }
+
+    const { selecteds } = this.state;
+
+    const index = this.elementIndex(selecteds, result);
+    const newSelecteds = this.updateElement(result, index);
+    this.setState({ selecteds: newSelecteds });
   }
 
   // -- Reactions --

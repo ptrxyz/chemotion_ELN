@@ -42,8 +42,6 @@ export default class EmbeddedWellplate extends Component {
     const { importWellplate } = this.props;
     const { wellplate } = this.state;
 
-    console.log(wellplate);
-
     importWellplate(wellplate.id);
     this.hideImportConfirm();
   }

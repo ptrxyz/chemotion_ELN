@@ -703,6 +703,15 @@ class ElementActions {
       });};
   }
 
+  importWellplateIntoResearchPlan(researchPlanId, wellplateId) {
+    return (dispatch) => {
+      ResearchPlansFetcher.importWellplate(researchPlanId, wellplateId)
+        .then((result) => {
+          dispatch(result);
+        }).catch((errorMessage) => { console.log(errorMessage); });
+    };
+  }
+
   // -- Report --
   showReportContainer() {
     return  Report.buildEmpty()

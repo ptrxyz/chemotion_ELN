@@ -6,6 +6,7 @@ import Immutable from 'immutable';
 import ElementCollectionLabels from '../ElementCollectionLabels';
 import UIActions from '../actions/UIActions';
 import ElementActions from '../actions/ElementActions';
+import ElementStore from '../stores/ElementStore';
 import DetailActions from '../actions/DetailActions';
 import ResearchPlansFetcher from '../fetchers/ResearchPlansFetcher';
 import ResearchPlansLiteratures from '../DetailsTabLiteratures';
@@ -214,13 +215,11 @@ export default class ResearchPlanDetails extends Component {
     this.setState({ researchPlan });
   }
 
-  importWellplate(wellplate) {
+  importWellplate(wellplateId) {
     const { researchPlan } = this.state;
     researchPlan.changed = true;
 
-    // TODO: implement API call
-    console.log('import Wellplate');
-    console.log(wellplate);
+    ElementActions.importWellplateIntoResearchPlan(researchPlan.id, wellplateId)
   }
 
   // eslint-disable-next-line class-methods-use-this
