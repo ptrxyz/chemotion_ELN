@@ -40,11 +40,11 @@ module Usecases
         columns = [
           {
             colId: :wellplate_position, field: :wellplate_position,
-            headerName: 'Position', width: 50, editable: false, resizable: true
+            headerName: 'Position', editable: false, resizable: true
           },
           {
             colId: :sample, field: :sample,
-            headerName: 'Sample', width: 75, editable: false, resizable: true
+            headerName: 'Sample', editable: false, resizable: true
           }
         ]
 
@@ -54,7 +54,6 @@ module Usecases
               colId: "readout_#{index + 1}_#{column_suffix}",
               field: "readout_#{index + 1}_#{column_suffix}",
               headerName: [readout_title, column_suffix.capitalize].join(' '),
-              width: 100,
               editable: true,
               resizable: true
             }
