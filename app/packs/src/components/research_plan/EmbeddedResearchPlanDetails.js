@@ -167,6 +167,7 @@ export default class EmbeddedResearchPlanDetails extends Component {
             onAdd={this.handleBodyAdd}
             onDelete={this.handleBodyDelete.bind(this)}
             onExport={this.handleExportField.bind(this)}
+            onCopyToMetadata={this.handleCopyToMetadata.bind(this)}
             update={update}
             edit={edit}
           />
@@ -174,6 +175,36 @@ export default class EmbeddedResearchPlanDetails extends Component {
       </ListGroup>
     );
   } /* eslint-enable */
+
+  handleCopyToMetadata(id, fieldName) {
+    const { researchPlan } = this.state;
+    const researchPlanMetadata = researchPlan.research_plan_metadata;
+    const args = { research_plan_id: researchPlanMetadata.research_plan_id };
+    const index = researchPlan.body.findIndex(field => field.id === id);
+    const value = researchPlan.body[index]?.value?.ops[0]?.insert?.trim() || '';
+    if (fieldName === 'name') {
+      researchPlanMetadata.title = researchPlan.name;
+      args.title = researchPlan.name.trim();
+    } else if (fieldName === 'subject') {
+      researchPlanMetadata.subject = value;
+      args.subject = value;
+    } else {
+      const type = researchPlan.body[index]?.title?.trim() || '';
+      const newItem = this.newItemByType(fieldName, value, type);
+
+      const currentCollection = researchPlanMetadata[fieldName] ?
+        researchPlanMetadata[fieldName] : [];
+      const newCollection = currentCollection.concat(newItem);
+      researchPlanMetadata[fieldName] = newCollection;
+      args[`${fieldName}`] = researchPlanMetadata[fieldName];
+    }
+
+    ResearchPlansFetcher.postResearchPlanMetadata(args).then((result) => {
+      if (result.error) {
+        alert(result.error);
+      }
+    });
+  }
 
   renderPanelHeading(researchPlan) {
     const { deleteResearchPlan, saveResearchPlan } = this.props;
