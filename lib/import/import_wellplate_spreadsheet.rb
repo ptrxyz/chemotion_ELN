@@ -80,8 +80,9 @@ module Import
 
       @header[@readout_index..(4 + value_headers.count * 2)].each_with_index do |vh, index|
         column = index + 4
-        value2compare = column.even? ? value_headers[index / 2] : unit_headers[index / 2]
-        error_messages << "#{vh} should be in column #{@letters[column]}" if vh != value2compare
+        comparison_index = index / 2
+        value_to_compare = column.even? ? value_headers[comparison_index] : unit_headers[comparison_index]
+        error_messages << "#{vh} should be in column #{@letters[column]}" if vh != value_to_compare
       end
 
       raise StandardError if error_messages.present?
@@ -120,7 +121,6 @@ module Import
           )
 
           well.update_attributes!(
-            sample_id: sample_id,
             readouts: readouts
           )
         end
