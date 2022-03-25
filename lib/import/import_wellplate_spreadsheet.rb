@@ -110,8 +110,6 @@ module Import
           @error_messages << "Error. Position #{row[@position_index]} is faulty." if row[@position_index] != expected_position
           raise StandardError if error_messages.present?
 
-          sample_id = row[@sample_index]
-
           tuples = row[@readout_index..@readout_index + @prefixes.count * 2 - 1].each_slice(2).to_a
           readouts = tuples.map { |tuple| Hash[[%w[value unit], tuple].transpose].symbolize_keys }
 
