@@ -162,7 +162,7 @@ export default class WellplateProperties extends Component {
             </tr>
           ))}
           <tr>
-            <td colspan={2}>
+            <td colSpan={2}>
               <OverlayTrigger placement="top" overlay={<Tooltip id="add_readout_title_tooltip">Add Readout Title</Tooltip>} >
                 <Button className="button-right" bsStyle="success" onClick={() => this.addReadoutTitle()}>
                   Add Readouts
