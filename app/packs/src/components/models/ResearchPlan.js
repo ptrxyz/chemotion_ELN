@@ -2,6 +2,7 @@ import { isEmpty } from 'lodash';
 import Element from './Element';
 import Container from './Container';
 import Segment from './Segment';
+import Wellplate from './Wellplate';
 
 const uuidv4 = require('uuid/v4');
 
@@ -190,5 +191,13 @@ export default class ResearchPlan extends Element {
 
   get segments() {
     return this._segments || [];
+  }
+
+  set wellplates(wellplates) {
+    this._wellplates = (wellplates && wellplates.map(w => new Wellplate(w))) || [];
+  }
+
+  get wellplates() {
+    return this._wellplates || [];
   }
 }

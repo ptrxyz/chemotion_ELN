@@ -58,8 +58,8 @@ class ResearchPlanWellplates extends Component {
 
         {wellplates && wellplates.map(wellplate => (
           <EmbeddedWellplate
-            key={`${wellplate.name}-${wellplate.id}`}
-            wellplate={new Wellplate(wellplate)}
+            key={`${wellplate.short_label}-${wellplate.id}`}
+            wellplate={wellplate}
             deleteWellplate={deleteWellplate}
             importWellplate={importWellplate}
           />

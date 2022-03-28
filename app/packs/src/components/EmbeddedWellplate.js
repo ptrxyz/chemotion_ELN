@@ -126,30 +126,30 @@ export default class EmbeddedWellplate extends Component {
   // eslint-disable-next-line class-methods-use-this
   renderWellplateMain(wellplate) {
     const { wells } = wellplate;
+    const wells_with_samples = wells.filter((well) => {
+      return well.sample !== null; // comparison with undefined does not work here as the key is present but the value might be null
+    });
 
     return (
       <Table striped bordered hover responsive style={{ fontSize: 12 }}>
         <thead>
           <tr>
-            <th style={this.cellStyle} width="5%">ID</th>
-            <th style={this.cellStyle} width="10%">Position</th>
-            {/* <th style={this.cellStyle} width="10%">Sample ID</th> */}
+            <th style={this.cellStyle} width="5%">Position</th>
+            <th style={this.cellStyle} width="10%">Sample</th>
             {this.renderReadoutHeaders()}
           </tr>
         </thead>
         <tbody>
-          {wells && wells.map((well) => {
+          {wells_with_samples && wells_with_samples.map((well) => {
             const { sample, position } = well;
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
             const positionY = alphabet[position.y - 1];
             const positions = positionY + position.x;
             return (
               <tr key={well.id}>
-                <td style={this.cellStyle}>{well.id}</td>
                 <td style={this.cellStyle}>{positions}</td>
-                {/* <td style={this.cellStyle}>{well.sample_id}</td> */}
+                <td style={this.cellStyle}>{sample.short_label} {sample.name}</td>
                 {this.renderReadoutFields(well)}
-
               </tr>
             );
           })}
