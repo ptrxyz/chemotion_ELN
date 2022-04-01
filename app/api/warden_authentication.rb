@@ -1,15 +1,13 @@
-module Api
-  class WardenAuthentication
-    def initialize(env)
-      @env = env
-    end
+class WardenAuthentication
+  def initialize(env)
+    @env = env
+  end
 
-    def warden
-      @env['warden']
-    end
+  def warden
+    @env['warden']
+  end
 
-    def current_user
-      warden.user
-    end
+  def current_user
+    warden.user
   end
 end
