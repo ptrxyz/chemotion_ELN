@@ -45,15 +45,15 @@ module Chemotion
         params do
           requires :raw_data, type: Array do
             requires :description, type: String
-            requires :sample_id, type: Integer
+            requires :sample_identifier, type: String
             requires :unit, type: String
+            requires :uuid, type: String
             requires :value, type: Float
           end
         end
 
         post do
           Usecases::Measurements::BulkCreateFromRawData.new(current_user, params[:raw_data]).execute!
-          {}
         rescue StandardError => e
           error!(e.full_message, 500)
         end
