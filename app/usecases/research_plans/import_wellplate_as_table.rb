@@ -70,7 +70,7 @@ module Usecases
 
           row = {
             wellplate_position: well.alphanumeric_position,
-            sample: well.sample.name
+            sample: well.sample.short_label
           }
           well.readouts.each_with_index do |readout, index|
             next if [readout['value'], readout['unit']].any?(&:blank?)
