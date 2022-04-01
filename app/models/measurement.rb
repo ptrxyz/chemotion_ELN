@@ -26,4 +26,14 @@ class Measurement < ApplicationRecord
   acts_as_paranoid # TODO: klären ob benötigt
   belongs_to :well, optional: true
   belongs_to :sample, optional: false
+
+  validate :data_is_unique, on: :create
+
+  private
+
+  def data_is_unique
+    if (Measurement.where(sample: sample, value: value, unit: unit).any?)
+      errors.add('Measurement with same data already exists')
+    end
+  end
 end
