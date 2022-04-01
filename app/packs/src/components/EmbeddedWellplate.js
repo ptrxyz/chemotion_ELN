@@ -125,10 +125,22 @@ export default class EmbeddedWellplate extends Component {
 
   // eslint-disable-next-line class-methods-use-this
   renderWellplateMain(wellplate) {
+    console.debug('renderWellplateMain');
+    console.debug(wellplate);
     const { wells } = wellplate;
+
+    // Wellplates that were just dragged in do not have samples assigned.
+    // Saving the research plan and reloading it reloads the wellplates and fetches the samples as well
+    if (wells.every(well => well.is_new)) {
+      return (<p>Please save the newly assigned wellplate to the research plan first</p>);
+    }
+
     const wells_with_samples = wells.filter((well) => {
       return well.sample !== null; // comparison with undefined does not work here as the key is present but the value might be null
     });
+
+    console.debug('wells with samples');
+    console.debug(wells_with_samples);
 
     return (
       <Table striped bordered hover responsive style={{ fontSize: 12 }}>
