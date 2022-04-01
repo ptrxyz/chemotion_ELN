@@ -8,6 +8,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 import uniqueId from 'react-html-id';
 import CustomTextEditor from '../common/CustomTextEditor';
+import ResearchPlanDetailsFieldTableMeasurementExportModal from './ResearchPlanDetailsFieldTableMeasurementExportModal';
 
 // regexp to parse tap separated paste from the clipboard
 const defaultParsePaste = str => (
@@ -25,6 +26,9 @@ export default class ResearchPlanDetailsFieldTable extends Component {
         colId: null
       },
       schemaModal: {
+        show: false
+      },
+      measurementExportModal: {
         show: false
       },
       selection: {},
@@ -171,6 +175,22 @@ export default class ResearchPlanDetailsFieldTable extends Component {
   handleSchemasModalHide() {
     this.setState({
       schemaModal: {
+        show: false
+      }
+    });
+  }
+
+  _handleMeasurementExportModalShow() {
+    this.setState({
+      measurementExportModal: {
+        show: true
+      }
+    });
+  }
+
+  _handleMeasurementExportModalHide() {
+    this.setState({
+      measurementExportModal: {
         show: false
       }
     });
@@ -384,7 +404,7 @@ export default class ResearchPlanDetailsFieldTable extends Component {
   renderEdit() {
     const { field, onExport } = this.props;
     const { rows, columns } = field.value;
-    const { columnNameModal, schemaModal, isDisable } = this.state;
+    const { columnNameModal, schemaModal, measurementExportModal, isDisable } = this.state;
 
     let contextMenuId = this.nextUniqueId();
     const defaultColDef = {
@@ -428,36 +448,41 @@ export default class ResearchPlanDetailsFieldTable extends Component {
             <ContextMenu id={contextMenuId}>
               <MenuItem onClick={this.handlePaste.bind(this)}>
                 Paste
-            </MenuItem>
+              </MenuItem>
               <MenuItem onClick={this.handleRenameClick.bind(this)}>
-                Rename column
-            </MenuItem>
+                  Rename column
+              </MenuItem>
               <MenuItem divider />
               <MenuItem onClick={this.handleInsertColumnClick.bind(this)}>
-                Add new column
-            </MenuItem>
+                  Add new column
+              </MenuItem>
               <MenuItem onClick={this.addNewRow.bind(this)}>
-                Add new row
-            </MenuItem>
+                  Add new row
+              </MenuItem>
               <MenuItem divider />
               <MenuItem onClick={this.removeThisColumn.bind(this)}>
-                Remove this column
-            </MenuItem>
+                  Remove this column
+              </MenuItem>
               <MenuItem onClick={this.removeThisRow.bind(this)}>
-                Remove this row
-            </MenuItem>
+                  Remove this row
+              </MenuItem>
             </ContextMenu>
           </div>
         </div>
 
         <div className='research-plan-table-toolbar'>
           <Row>
-            <Col xs={3}>
+            <Col xs={4}>
               <Button bsSize='xsmall' onClick={this.handleSchemaModalShow.bind(this)}>
                 Table schemas
               </Button>
             </Col>
-            <Col xs={3} xsOffset={6}>
+            <Col xs={4}>
+              <Button bsSize='xsmall' onClick={this._handleMeasurementExportModalShow.bind(this)}>
+                Export Measurements
+              </Button>
+            </Col>
+            <Col xs={4}>
               <Button bsSize='xsmall' onClick={() => onExport(field)}>
                 Export as Excel
               </Button>
@@ -475,6 +500,11 @@ export default class ResearchPlanDetailsFieldTable extends Component {
           onHide={this.handleSchemasModalHide.bind(this)}
           onUse={this.handleSchemasModalUse.bind(this)}
           onDelete={this.handleSchemasModalDelete.bind(this)} />
+        <ResearchPlanDetailsFieldTableMeasurementExportModal
+          show={measurementExportModal.show}
+          onHide={this._handleMeasurementExportModalHide.bind(this)}
+          rows={rows}
+          columns={columns} />
       </div>
     );
   }
