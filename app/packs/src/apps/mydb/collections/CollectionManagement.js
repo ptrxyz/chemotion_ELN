@@ -5,6 +5,7 @@ import MyCollections from 'src/apps/mydb/collections/MyCollections';
 import MySharedCollections from 'src/apps/mydb/collections/MySharedCollections';
 import SharedWithMeCollections from 'src/apps/mydb/collections/SharedWithMeCollections';
 import SyncWithMeCollections from 'src/apps/mydb/collections/SyncWithMeCollections';
+import GenericSegmentsTabs from 'src/apps/mydb/collections/GenericSegmentsTabs';
 import XTabs from 'src/components/extra/CollectionManagementXTabs';
 
 const CollectionManagement = () => {
@@ -13,6 +14,7 @@ const CollectionManagement = () => {
     <Tab eventKey={1} key={1} title="My Shared Collections"><MySharedCollections /></Tab>,
     <Tab eventKey={2} key={2} title="Collections shared with me "><SharedWithMeCollections /></Tab>,
     <Tab eventKey={3} key={3} title="Collections synchronized with me "><SyncWithMeCollections /></Tab>,
+    <Tab eventKey={4} key={4} title="Segments Tab"><GenericSegmentsTabs /></Tab>
   ];
   const offset = tabContents.length;
   for (let j = 0; j < XTabs.count; j += 1) {
