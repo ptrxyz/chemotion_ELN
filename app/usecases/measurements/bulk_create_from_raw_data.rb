@@ -44,14 +44,14 @@ module Usecases
 
         sample = Sample.find_by(short_label: entry['sample_identifier'])
 
-        entry['errors'] << ERRORS[:permission_error] unless !ElementsPolicy.new(current_user, sample).update?
+        entry['errors'] << ERRORS[:permission_error] unless ElementPolicy.new(current_user, sample).update?
       end
 
       def create_measurement!(entry)
         return if entry_has_errors?(entry)
 
         sample = Sample.find_by(short_label: entry['sample_identifier'])
-        measurement = Measurement.build(
+        measurement = Measurement.new(
           sample: sample,
           description: entry['description'],
           unit: entry['unit'],
