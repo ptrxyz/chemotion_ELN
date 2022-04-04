@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, ButtonToolbar, Button, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
+import LoadingActions from '../actions/LoadingActions';
 import MeasurementsFetcher from '../fetchers/MeasurementsFetcher';
 
 class MeasurementCandidate extends Component {
@@ -70,7 +71,7 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
     if (selectedCandidates.length == 0) {
       return;
     }
-
+    LoadingActions.start();
     MeasurementsFetcher.postResearchPlanMetadata(selectedCandidates).then((result) => {
       console.debug('Got Post Result!');
       console.debug(result);
@@ -80,12 +81,14 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
         if (index > -1) { // safeguard to make sure the script does not crash if for whatever reason the candidate can not be found
           if (measurement.errors.length === 0) {
             measurementCandidates[index].id = measurement.id
+            measurementCandidates[index].selected = false
           } else {
             measurement.errors.forEach(error => measurementCandidates[index].errors.push(error))
           }
         }
       });
       this.setState({measurementCandidates});
+      LoadingActions.stop();
     });
 
   }
@@ -95,7 +98,7 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
     const readyForSubmit = measurementCandidates.findIndex((candidate) => candidate.selected === true) > -1;
 
     return (
-      <Modal animation show={this.props.show} onHide={this.props.onHide} className="measurementExportModal">
+      <Modal animation bsSize="large" show={this.props.show} onHide={this.props.onHide} className="measurementExportModal">
         <Modal.Header closeButton>
           <Modal.Title>
             Export measurements to samples
