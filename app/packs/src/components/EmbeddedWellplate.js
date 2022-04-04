@@ -11,11 +11,9 @@ import Wellplate from './models/Wellplate';
 export default class EmbeddedWellplate extends Component {
   constructor(props) {
     super(props);
-    const { wellplate } = props;
     this.cellStyle = { padding: 0 };
 
     this.state = {
-      wellplate,
       expanded: false,
       confirmRemove: false,
       showImportConfirm: false,
@@ -24,7 +22,7 @@ export default class EmbeddedWellplate extends Component {
 
   openWellplate() {
     const { currentCollection, isSync } = UIStore.getState();
-    const wellplateID = this.state.wellplate.id;
+    const wellplateID = this.props.wellplate.id;
     const uri = `/${isSync ? 's' : ''}collection/${currentCollection.id}/wellplate/${wellplateID}`;
     Aviator.navigate(uri, { silent: true });
     wellplateShowOrNew({ params: { wellplateID } });
@@ -40,15 +38,14 @@ export default class EmbeddedWellplate extends Component {
 
   confirmWellplateImport() {
     const { importWellplate } = this.props;
-    const { wellplate } = this.state;
 
-    importWellplate(wellplate.id);
+    importWellplate(this.props.wellplate.id);
     this.hideImportConfirm();
   }
 
   // render functions
   renderReadoutHeaders() {
-    const readoutTitles = this.state.wellplate.readout_titles;
+    const readoutTitles = this.props.wellplate.readout_titles;
     return (
       readoutTitles && readoutTitles.map((title) => {
         const key = title.id;
@@ -125,8 +122,6 @@ export default class EmbeddedWellplate extends Component {
 
   // eslint-disable-next-line class-methods-use-this
   renderWellplateMain(wellplate) {
-    console.debug('renderWellplateMain');
-    console.debug(wellplate);
     const { wells } = wellplate;
 
     // Wellplates that were just dragged in do not have samples assigned.
@@ -138,9 +133,6 @@ export default class EmbeddedWellplate extends Component {
     const wells_with_samples = wells.filter((well) => {
       return well.sample !== null; // comparison with undefined does not work here as the key is present but the value might be null
     });
-
-    console.debug('wells with samples');
-    console.debug(wells_with_samples);
 
     return (
       <Table striped bordered hover responsive style={{ fontSize: 12 }}>
@@ -228,7 +220,7 @@ export default class EmbeddedWellplate extends Component {
   }
 
   render() {
-    const { wellplate } = this.state;
+    const { wellplate } = this.props;
 
     return (
       <Panel expanded={this.state.expanded} onToggle={() => {}} bsStyle="primary" className="eln-panel-detail wellplate-details">
