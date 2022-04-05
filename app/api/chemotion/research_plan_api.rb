@@ -303,6 +303,40 @@ module Chemotion
           end
         end
       end
+
+      desc 'Import table from spreadsheet into a research plan'
+      params do
+        requires :id, type: Integer, desc: 'Research plan id'
+        requires :attachment_id, type: String, desc: 'Wellplate id'
+      end
+      route_param :id do
+        before do
+          research_plan = ResearchPlan.find(params[:id])
+          error!('401 Unauthorized', 401) unless ElementPolicy.new(current_user, research_plan).update?
+          error!('401 Unauthorized', 401) unless ElementPolicy.new(current_user, research_plan.attachments.find(params[:attachment_id])).read?
+        end
+
+        post 'import_table/:attachment_id' do
+          research_plan = ResearchPlan.find(params[:id])
+          attachment = research_plan.attachments.find(params[:attachment_id])
+          exporter = Usecases::ResearchPlans::ImportTableFromSpreadsheet.new(research_plan, attachment)
+          begin
+            exporter.execute!
+            # TODO: Refactor this massively ugly fallback to be in a more convenient place
+            # (i.e. the serializer/entity or maybe return a null element from the model)
+            research_plan.build_research_plan_metadata(
+              title: research_plan.name,
+              subject: ''
+            ) if research_plan.research_plan_metadata.nil?
+            {
+              research_plan: ElementPermissionProxy.new(current_user, research_plan, user_ids).serialized,
+              attachments: Entities::AttachmentEntity.represent(research_plan.attachments),
+            }
+          rescue StandardError => e
+            error!(e, 500)
+          end
+        end
+      end
     end
   end
 end
