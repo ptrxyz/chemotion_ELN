@@ -3,22 +3,34 @@
 module Usecases
   module Wellplates
     class Create
-      attr_reader :params, :user
+      attr_reader :params, :current_user
 
-      def initialize(params, user)
+      def initialize(params, current_user)
         @params = params
-        @user = user
+        @current_user = current_user
       end
 
       def execute!
         ActiveRecord::Base.transaction do
           wellplate = Wellplate.create(params.except(:collection_id, :wells, :segments))
-          wellplate.set_short_label(user: user)
+          wellplate.set_short_label(user: @current_user)
           wellplate.reload
-          wellplate.save_segments(segments: params[:segments], current_user_id: @user_id)
-          collection = Collection.find(params[:collection_id])
-          CollectionsWellplate.create(wellplate: wellplate, collection: collection)
-          CollectionsWellplate.create(wellplate: wellplate, collection: Collection.get_all_collection_for_user(user.id))
+          wellplate.save_segments(segments: params[:segments], current_user_id: @current_user.id)
+          collection = current_user.collections.where(id: params[:collection_id]).take
+          CollectionsWellplate.create(wellplate: wellplate, collection: collection) if collection.present?
+
+          is_shared_collection = false
+          unless collection.present?
+            sync_collection = current_user.all_sync_in_collections_users.where(id: params[:collection_id]).take
+            if sync_collection.present?
+              is_shared_collection = true
+              CollectionsWellplate.create(wellplate: wellplate, collection: Collection.find(sync_collection['collection_id']))
+              CollectionsWellplate.create(wellplate: wellplate, collection: Collection.get_all_collection_for_user(sync_collection['shared_by_id']))
+            end
+          end
+
+          CollectionsWellplate.create(wellplate: wellplate, collection: Collection.get_all_collection_for_user(current_user.id)) unless is_shared_collection
+
           WellplateUpdater.update_wells_for_wellplate(wellplate, params[:wells])
           wellplate
         end

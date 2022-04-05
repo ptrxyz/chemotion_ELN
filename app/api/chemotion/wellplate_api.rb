@@ -165,10 +165,11 @@ module Chemotion
         optional :segments, type: Array, desc: 'Segments'
       end
       post do
-        container = params.delete(:container)
+        container = params[:container]
+        params.delete(:container)
 
         wellplate = Usecases::Wellplates::Create.new(declared(params, include_missing: false), current_user).execute!
-        wellplate.container = update_datamodel(container)
+        wellplate.container =  update_datamodel(container)
 
         wellplate.save!
 

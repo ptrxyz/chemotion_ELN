@@ -23,6 +23,7 @@ import ResearchPlanDetailsName from './ResearchPlanDetailsName';
 import ResearchPlanDetailsContainers from './ResearchPlanDetailsContainers';
 import ElementDetailSortTab from '../ElementDetailSortTab';
 import { addSegmentTabs } from '../generic/SegmentDetails';
+import PrivateNoteElement from '../PrivateNoteElement';
 
 export default class ResearchPlanDetails extends Component {
   constructor(props) {
@@ -458,6 +459,7 @@ export default class ResearchPlanDetails extends Component {
             {btnMode}
           </div>
           {this.renderResearchPlanMain(researchPlan, update)}
+          <PrivateNoteElement element={researchPlan} disabled={researchPlan.can_update} />
         </Tab>
       ),
       analyses: (

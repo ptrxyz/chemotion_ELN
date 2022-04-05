@@ -25,6 +25,7 @@ import ConfirmClose from './common/ConfirmClose';
 import ExportSamplesBtn from './ExportSamplesBtn';
 import ElementDetailSortTab from './ElementDetailSortTab';
 import { addSegmentTabs } from './generic/SegmentDetails';
+import PrivateNoteElement from './PrivateNoteElement'
 
 const cols = 12;
 
@@ -311,6 +312,7 @@ export default class WellplateDetails extends Component {
             handleAddReadout={c => this.handleAddReadout(c)}
             handleRemoveReadout={c => this.handleRemoveReadout(c)}
           />
+          <PrivateNoteElement element={wellplate} disabled={wellplate.can_update} /> {/*For samples and reactions (<element>): disabled={!<element>.can_update} */}
         </Tab>
       ),
       analyses: (
