@@ -313,7 +313,6 @@ module Chemotion
         before do
           research_plan = ResearchPlan.find(params[:id])
           error!('401 Unauthorized', 401) unless ElementPolicy.new(current_user, research_plan).update?
-          error!('401 Unauthorized', 401) unless ElementPolicy.new(current_user, research_plan.attachments.find(params[:attachment_id])).read?
         end
 
         post 'import_table/:attachment_id' do

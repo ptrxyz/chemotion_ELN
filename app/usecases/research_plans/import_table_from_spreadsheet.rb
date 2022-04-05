@@ -5,7 +5,7 @@ require 'roo'
 module Usecases
   module ResearchPlans
     class ImportTableFromSpreadsheet
-      def initialize(research_plan:, attachment:)
+      def initialize(research_plan, attachment)
         @research_plan = research_plan
         @attachment = attachment
         @file_path = @attachment.store.path
@@ -44,8 +44,8 @@ module Usecases
           type: :table,
           title: @attachment.filename,
           value: {
-            rows: @rows,
-            columns: @headers
+            rows: @rows.map(&:stringify_keys),
+            columns: @headers.map(&:stringify_keys)
           }
         }
         @research_plan.save!
@@ -69,9 +69,10 @@ module Usecases
       def row_definition(row_data)
         row = {}
         row_data.each_with_index do |entry, index|
-          field_name = @headers[index]
+          field_name = @headers[index][:field]
           row[field_name] = entry
         end
+        row
       end
     end
   end
