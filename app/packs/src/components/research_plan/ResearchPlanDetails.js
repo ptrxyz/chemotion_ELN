@@ -402,6 +402,7 @@ export default class ResearchPlanDetails extends Component {
       <ListGroup fill="true">
         <ListGroupItem >
           <ResearchPlanDetailsAttachments
+            researchPlan={researchPlan}
             attachments={attachments}
             onDrop={this.handleAttachmentDrop.bind(this)}
             onDelete={this.handleAttachmentDelete.bind(this)}

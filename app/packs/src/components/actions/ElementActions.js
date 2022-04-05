@@ -712,6 +712,15 @@ class ElementActions {
     };
   }
 
+  importTableFromSpreadsheet(researchPlanId, attachmentId) {
+    return (dispatch) => {
+      ResearchPlansFetcher.importTableFromSpreadsheet(researchPlanId, attachmentId)
+        .then((result) => {
+          dispatch(result);
+        }).catch((errorMessage) => { console.log(errorMessage); });
+    };
+  }
+
   // -- Report --
   showReportContainer() {
     return  Report.buildEmpty()

@@ -125,7 +125,6 @@ class ElementStore {
     }
 
     this.bindListeners({
-      //
       handleFetchAllDevices: ElementActions.fetchAllDevices,
       handleFetchDeviceById: ElementActions.fetchDeviceById,
       handleCreateDevice: ElementActions.createDevice,
@@ -207,6 +206,7 @@ class ElementStore {
       handlefetchResearchPlanById: ElementActions.fetchResearchPlanById,
       handleCreateResearchPlan: ElementActions.createResearchPlan,
       handleImportWellplateIntoResearchPlan: ElementActions.importWellplateIntoResearchPlan,
+      handleImportTableFromSpreadsheet: ElementActions.importTableFromSpreadsheet,
 
       handleCreatePrivateNote: ElementActions.createPrivateNote,
       handleUpdatePrivateNote: ElementActions.updatePrivateNote,
@@ -863,6 +863,16 @@ class ElementStore {
   }
 
   handleImportWellplateIntoResearchPlan(result) {
+    if (result.error) { return; }
+
+    const { selecteds } = this.state;
+
+    const index = this.elementIndex(selecteds, result);
+    const newSelecteds = this.updateElement(result, index);
+    this.setState({ selecteds: newSelecteds });
+  }
+
+  handleImportTableFromSpreadsheet(result) {
     if (result.error) { return; }
 
     const { selecteds } = this.state;
