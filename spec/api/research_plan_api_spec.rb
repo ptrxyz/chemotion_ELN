@@ -114,16 +114,16 @@ describe Chemotion::ResearchPlanAPI do
         expect(table['type']).to eq 'table'
 
         expect(rows.size).to eq 12 * 8
-        expect(columns.size).to eq 4 # coordinate + 3 readouts
+        expect(columns.size).to eq 8 # coordinate + 3*2 readout spalten
 
-        names = columns.map { |column| column['name'] }
-        expect(names).to eq ['X, Y', 'Readout 1', 'Readout 2', 'Readout 3']
+        names = columns.map { |column| column['headerName'] }
+        expect(names).to eq ['Position', 'Sample', 'Readout 1 Value', 'Readout 1 Unit', 'Readout 2 Value', 'Readout 2 Unit', 'Readout 3 Value', 'Readout 3 Unit']
 
         first_row = rows.first
         first_readout = wellplate.wells.first.readouts.first
-        expected_value = "#{first_readout['value']} #{first_readout['unit']}"
 
-        expect(first_row['readout_1']).to eq expected_value
+        expect(first_row['readout_1_value']).to eq first_readout['value']
+        expect(first_row['readout_1_unit']).to eq first_readout['unit']
       end
     end
   end

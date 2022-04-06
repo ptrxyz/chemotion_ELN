@@ -77,7 +77,6 @@ RSpec.describe 'ImportWellplateSpreadsheet' do
     end
 
     it 'imports well readouts' do
-      expected_sample_ids = (1..96).map { |x| x + 10_000 }
       expected_readouts = (1..96).map do |x|
         [{ value: "0.#{x}".to_f,
            unit: 'mg' }.stringify_keys,
@@ -86,7 +85,6 @@ RSpec.describe 'ImportWellplateSpreadsheet' do
       end
 
       expect(wellplate.wells.count).to eq 96
-      expect(wellplate.ordered_wells.pluck(:sample_id)).to eq expected_sample_ids
       expect(wellplate.ordered_wells.pluck(:readouts)).to eq expected_readouts
     end
   end

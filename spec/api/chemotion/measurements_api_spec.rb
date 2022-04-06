@@ -86,8 +86,9 @@ describe Chemotion::MeasurementsAPI do
         wellplate.wells.map do |well|
           well.readouts.map.with_index do |readout, readout_index|
             {
+              uuid: SecureRandom.uuid,
               description: wellplate.readout_titles[readout_index],
-              sample_id: well.sample.id,
+              sample_identifier: well.sample.short_label,
               unit: readout['unit'],
               value: readout['value']
             }.with_indifferent_access
@@ -106,9 +107,9 @@ describe Chemotion::MeasurementsAPI do
       it 'creates measurements from the given well' do
         measurements_before = Measurement.count
         post "/api/v1/measurements/bulk_create_from_raw_data", params: params, as: :json
+
         created_measurements = Measurement.count - measurements_before
 
-        expect(response.body).to eq '{}'
         expect(created_measurements).to eq 96*3
 
         measurements = Measurement.last(96*3)

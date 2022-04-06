@@ -11,7 +11,7 @@ describe Usecases::Measurements::BulkCreateFromRawData do
       well.readouts.map.with_index do |readout, readout_index|
         {
           description: wellplate.readout_titles[readout_index],
-          sample_id: well.sample.id,
+          sample_identifier: well.sample.short_label,
           unit: readout['unit'],
           value: readout['value']
         }.with_indifferent_access
@@ -34,37 +34,13 @@ describe Usecases::Measurements::BulkCreateFromRawData do
       raw_data.each do |datapoint|
         measurement = measurements.find do |m|
           m.description == datapoint[:description] &&
-            m.sample_id == datapoint[:sample_id] &&
+            m.sample.short_label == datapoint[:sample_identifier] &&
             m.unit == datapoint[:unit] &&
             m.value.to_f == datapoint[:value] # db uses BigDecimal while spec has float
         end
 
         expect(measurement.present?).to be true
       end
-    end
-  end
-
-  context 'when some values are missing' do
-    before do
-      raw_data[0][:description] = nil
-    end
-
-    it 'raises an error' do
-      expect { described_class.new(raw_data, current_user).execute! }.to raise_error(
-        'Data Error - all entries need description, sample_id, unit and value data'
-      )
-    end
-  end
-
-  context 'when some fields are missing' do
-    before do
-      raw_data[0].delete(:unit)
-    end
-
-    it 'raises an error' do
-      expect { described_class.new(raw_data, current_user).execute! }.to raise_error(
-        'Data Error - all entries need description, sample_id, unit and value data'
-      )
     end
   end
 end
