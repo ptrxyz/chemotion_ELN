@@ -16,7 +16,7 @@ version: '3'
 
 services:
   postgres:
-    image: 'postgres:latest'
+    image: 'postgres:14.2-alpine3.15'
     environment:
       - 'POSTGRES_HOST_AUTH_METHOD=trust'
     expose: # expose port to app container
@@ -24,7 +24,7 @@ services:
     ports: # expose port to host machine in case we want to use external db gui tools
       - '5432:5432'
     volumes:
-      - 'database:/var/lib/postgresql'
+      - 'database:/var/lib/postgresql/data'
 
   app:
     build:
