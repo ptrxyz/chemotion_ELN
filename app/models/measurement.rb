@@ -13,12 +13,15 @@
 #  sample_id   :bigint           not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  source_type :string
+#  source_id   :bigint
 #
 # Indexes
 #
-#  index_measurements_on_deleted_at  (deleted_at)
-#  index_measurements_on_sample_id   (sample_id)
-#  index_measurements_on_well_id     (well_id)
+#  index_measurements_on_deleted_at                 (deleted_at)
+#  index_measurements_on_sample_id                  (sample_id)
+#  index_measurements_on_source_type_and_source_id  (source_type,source_id)
+#  index_measurements_on_well_id                    (well_id)
 #
 
 
@@ -26,13 +29,14 @@ class Measurement < ApplicationRecord
   acts_as_paranoid # TODO: klären ob benötigt
   belongs_to :well, optional: true
   belongs_to :sample, optional: false
+  belongs_to :source, polymorphic: true
 
   validate :data_is_unique, on: :create
 
   private
 
   def data_is_unique
-    if (Measurement.where(sample: sample, value: value, unit: unit).any?)
+    if (Measurement.where(sample: sample, value: value, unit: unit, source: source).any?)
       errors.add('Measurement with same data already exists')
     end
   end

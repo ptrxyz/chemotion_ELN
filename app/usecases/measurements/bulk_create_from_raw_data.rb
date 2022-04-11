@@ -3,15 +3,16 @@
 module Usecases
   module Measurements
     class BulkCreateFromRawData
-      attr_reader :raw_data, :current_user
+      attr_reader :current_user, :params, :source
       ERRORS = {
         permission_error: 'Permission Error - You are not allowed to update this sample',
+        source_error: 'Permission Error - You are not allowed to create measurements from this source',
         sample_not_found: 'Could not find sample',
         missing_fields: 'Data Error - description, sample identifier, unit and value data required',
         sample_identifier_ambiguous: 'Sample identifier matches more than one sample, measurement cannot be assigned correctly',
       }
 
-      # raw_data: 
+      # params:
       # [
       #   {
       #     uuid # an artificial identifier only required for the frontend, can be ignored
@@ -21,13 +22,16 @@ module Usecases
       #     value
       #   }
       # ]
-      def initialize(current_user, raw_data)
-        @raw_data = raw_data
+      # source_type: String with name of ActiveRecord Model class
+      # source_id: Database ID of the source record
+      def initialize(current_user, params)
+        @params = params
+        @source = params[:source_type].constantize.find(params[:source_id])
         @current_user = current_user
       end
 
       def execute!
-        raw_data.map do |entry|
+        params.map do |entry|
           entry['errors'] ||= []
           check_sample_availability!(entry)
           check_sample_permissions!(entry)
@@ -45,6 +49,7 @@ module Usecases
         sample = Sample.find_by(short_label: entry['sample_identifier'])
 
         entry['errors'] << ERRORS[:permission_error] unless ElementPolicy.new(current_user, sample).update?
+        entry['errors'] << ERRORS[:source_error] unless ElementPolicy.new(current_user, source).read?
       end
 
       def create_measurement!(entry)
@@ -55,7 +60,8 @@ module Usecases
           sample: sample,
           description: entry['description'],
           unit: entry['unit'],
-          value: entry['value']
+          value: entry['value'],
+          source: source
         )
         if (measurement.valid?)
           measurement.save!
