@@ -44,6 +44,9 @@ RUN useradd -ms /bin/bash chemotion-dev \
 USER chemotion-dev
 WORKDIR /home/chemotion-dev
 
+# Create node modules folder OUTSIDE of application directory
+RUN mkdir /home/chemotion-dev/node_modules
+
 SHELL ["/bin/bash", "-c"]
 
 RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch $ASDF_BRANCH
@@ -60,25 +63,11 @@ RUN asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
 RUN asdf install ruby $VRUBY
 RUN asdf global ruby $VRUBY
 
-RUN mkdir -p shared/node_modules
-RUN ln -s shared/node_modules node_modules
-
-
-COPY Gemfile /home/chemotion-dev/
-COPY Gemfile.lock /home/chemotion-dev/
-COPY package.json /home/chemotion-dev/
-COPY package_postinstall.sh /home/chemotion-dev/
-COPY yarn.lock /home/chemotion-dev/
 RUN echo 'network-timeout 600000' > /home/chemotion-dev/.yarnrc
-RUN sudo chmod 666 Gemfile.lock
-RUN sudo chmod 666 yarn.lock
+# use node modules from outside the application directory
+RUN echo '--modules-folder /home/chemotion-dev/node_modules/' >> /home/chemotion-dev/.yarnrc
 
-RUN /bin/bash -l -c "npm install -g yarn"
-RUN /bin/bash -l -c "yarn install"
-
-
-RUN /bin/bash -l -c "gem install bundler -v 1.17.3 && bundle install "
-RUN sudo apt-get -y --autoremove --fix-missing install \
+RUN sudo apt-get -y --fix-missing install \
     libboost-serialization1.71.0 \
     libboost-iostreams1.71.0 \
     libboost-system1.71.0

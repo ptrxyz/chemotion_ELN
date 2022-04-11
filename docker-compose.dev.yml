@@ -32,12 +32,31 @@ services:
       dockerfile: 'Dockerfile.chemotion-dev'
     depends_on:
       - 'postgres'
+    environment:
+      - 'WEBPACKER_DEV_SERVER_HOST=webpacker'
     ports: # expose default rails port to host machine
       - "3000:3000"
     volumes:
-       - '.:/home/chemotion-dev/app'
+      - 'homedir:/home/chemotion-dev/'
+      - '.:/home/chemotion-dev/app'
     working_dir: "/home/chemotion-dev/app"
-    command: "./run-dev.sh"
+    command: "./run-ruby-dev.sh"
+
+  webpacker:
+    build:
+      context: '.'
+      dockerfile: 'Dockerfile.chemotion-dev'
+    environment:
+      - 'WEBPACKER_DEV_SERVER_PUBLIC=localhost:3035'
+      - 'WEBPACKER_DEV_SERVER_HOST=localhost'
+      - 'WEBPACKER_NODE_MODULES_BIN_PATH=/node_modules/.bin'
+    volumes:
+      - 'homedir:/home/chemotion-dev/'
+      - '.:/home/chemotion-dev/app'
+    ports:
+      - '3035:3035'
+    working_dir: "/home/chemotion-dev/app"
+    command: './run-js-dev.sh'
 
 volumes:
   database:
