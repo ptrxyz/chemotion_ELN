@@ -1,5 +1,4 @@
 #!/bin/bash
-ln -s ../node_modules node_modules
 
 if [ ! -x yarn ]
 then
