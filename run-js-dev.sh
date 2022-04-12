@@ -7,4 +7,4 @@ fi
 yarn install
 
 echo "THIS WILL FAIL UNTIL THE RUBY GEMS ARE INSTALLED BY run-ruby-dev.sh. JUST TRY AGAIN AFTER INSTALLING THEM."
-./bin/webpack-dev-server --inline true
+./bin/webpack-dev-server --inline

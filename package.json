@@ -136,7 +136,7 @@
   ],
   "babel": {
     "presets": [
-      "./node_modules/@rails/webpacker/package/babel/preset.js",
+      "@rails/webpacker/package/babel/preset.js",
       "@babel/preset-react"
     ]
   }
