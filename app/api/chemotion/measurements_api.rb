@@ -69,7 +69,7 @@ module Chemotion
               }
             end
           }
-          results << entry
+          results << entry if entry[:measurements].any?
         end
         results
       end
