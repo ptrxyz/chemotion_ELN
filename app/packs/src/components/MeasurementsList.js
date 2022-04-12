@@ -15,24 +15,24 @@ export default class MeasurementsList extends React.Component {
   componentDidMount() {
     var samplesWithMeasurements = [];
     MeasurementsFetcher.fetchMeasurementHierarchy(this.props.sample).then(samples => {
-      samplesWithMeasurements = samples;
+      this.setState({samplesWithMeasurements: samples});
     });
-
-    this.setState({samplesWithMeasurements})
   }
 
   renderEntry(entry) {
     const measurements = entry.measurements.map(measurement => {
       return (
-        <li className="measurementList--measurement">
+        <li className="measurementList--measurement" key={`Measurement${measurement.id}`}>
           {measurement.description}: {measurement.value}{measurement.unit}
         </li>
       );
     });
 
     return (
-      <div className="measurementList--entry">
-        <h3 className="measurementList--sampleName">{entry.short_label} {entry.name}</h3>
+      <div className="measurementList--entry" key={`MeasurementListEntry${entry.id}`}>
+        <h4 className="measurementList--sampleName" key={`MeasurementListEntryHeadline${entry.ide}`}>
+          {entry.short_label} {entry.name}
+        </h4>
         <ul className="unstyled-list">
           {measurements}
         </ul>
@@ -41,7 +41,7 @@ export default class MeasurementsList extends React.Component {
   }
 
   render() {
-    const entries = this.state.samplesWithMeasurements.map(entry => renderEntry(entry));
+    const entries = this.state.samplesWithMeasurements.map(entry => this.renderEntry(entry));
     if (entries.length == 0) {
       return (
         <span>No measurements recorded for this sample</span>

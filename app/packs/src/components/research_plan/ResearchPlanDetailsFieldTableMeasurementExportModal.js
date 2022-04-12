@@ -1,3 +1,4 @@
+import Aviator from 'aviator';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, ButtonToolbar, Button, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
@@ -61,8 +62,20 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
     super(props);
     const measurementCandidates = this._measurementCandidates(props.rows, props.columns);
     this.state = {
-      measurementCandidates: measurementCandidates
+      measurementCandidates: measurementCandidates,
+      researchPlanId: this.getResearchPlanIdFromPath() ?? -1
     };
+  }
+
+  getResearchPlanIdFromPath() {
+    const currentURI = Aviator.getCurrentURI();
+
+    const researchPlanMatch = currentURI.match(/\/research_plan\/(\d+)/);
+    if (researchPlanMatch) {
+      return researchPlanMatch[1];
+    } else {
+      return -1;
+    }
   }
 
   handleSubmit() {
@@ -72,7 +85,7 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
       return;
     }
     LoadingActions.start();
-    MeasurementsFetcher.postResearchPlanMetadata(selectedCandidates).then((result) => {
+    MeasurementsFetcher.createMeasurements(selectedCandidates, this.state.researchPlanId).then((result) => {
       console.debug('Got Post Result!');
       console.debug(result);
 
@@ -93,9 +106,15 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
 
   }
 
+  readyForSubmit() {
+    const candidatesSelected = this.state.measurementCandidates.findIndex((candidate) => candidate.selected === true) > -1;
+    const researchPlanIdPresent = this.state.researchPlanId > -1;
+
+    return candidatesSelected && researchPlanIdPresent;
+  }
+
   render() {
     const { measurementCandidates } = this.state;
-    const readyForSubmit = measurementCandidates.findIndex((candidate) => candidate.selected === true) > -1;
 
     return (
       <Modal animation bsSize="large" show={this.props.show} onHide={this.props.onHide} className="measurementExportModal">
@@ -138,7 +157,7 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
               <Button bsStyle="warning" onClick={this.props.onHide}>
                 Cancel
               </Button>
-              <Button bsStyle="primary" disabled={!readyForSubmit} onClick={this.handleSubmit.bind(this)}>
+              <Button bsStyle="primary" disabled={!this.readyForSubmit()} onClick={this.handleSubmit.bind(this)}>
                 Export Measurements
               </Button>
             </ButtonToolbar>
