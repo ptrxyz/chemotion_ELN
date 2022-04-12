@@ -10,7 +10,7 @@ export default class MeasurementsFetcher {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       }
-    }).then(json => { json }).catch(errorMessage => { console.log(errorMessage); })
+    }).then(response => { response.json() }).catch(errorMessage => { console.log(errorMessage); })
 
     return promise;
   }

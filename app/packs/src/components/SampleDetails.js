@@ -67,6 +67,7 @@ import FastInput from './FastInput';
 import ScifinderSearch from './scifinder/ScifinderSearch';
 import ElementDetailSortTab from './ElementDetailSortTab';
 import { addSegmentTabs } from './generic/SegmentDetails';
+import MeasurementsList from './MeasurementsList';
 
 const MWPrecision = 6;
 
@@ -1052,7 +1053,7 @@ export default class SampleDetails extends React.Component {
       <Tab
         eventKey={index}
         title="Measurements"
-        key={`Results${sample.id.toString()}`}
+        key={`Measurements${sample.id.toString()}`}
       >
         <ListGroupItem style={{ paddingBottom: 20 }}>
           <MeasurementsList sample={sample} />
