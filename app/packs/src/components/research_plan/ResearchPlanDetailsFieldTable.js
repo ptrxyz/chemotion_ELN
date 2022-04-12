@@ -7,7 +7,6 @@ import ResearchPlansFetcher from '../fetchers/ResearchPlansFetcher';
 import { AgGridReact } from 'ag-grid-react';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 import uniqueId from 'react-html-id';
-import CustomTextEditor from '../common/CustomTextEditor';
 import ResearchPlanDetailsFieldTableMeasurementExportModal from './ResearchPlanDetailsFieldTableMeasurementExportModal';
 
 // regexp to parse tap separated paste from the clipboard
@@ -59,7 +58,7 @@ export default class ResearchPlanDetailsFieldTable extends Component {
       editable: true,
       resizable: true,
       width: 200,
-      cellEditor: CustomTextEditor
+      cellEditor: 'agTextCellEditor'
     };
   }
 
@@ -104,10 +103,7 @@ export default class ResearchPlanDetailsFieldTable extends Component {
     const { gridApi, columnApi } = this.state
 
     let columnDefs = gridApi.getColumnDefs();
-    columnDefs.push({
-      headerName: columnName,
-      field: columnName,
-    });
+    columnDefs.push(this.buildColumn(columnName));
     gridApi.setColumnDefs(columnDefs);
     field.value.columns = gridApi.getColumnDefs();
     field.value.columnStates = columnApi.getColumnState();
@@ -258,23 +254,6 @@ export default class ResearchPlanDetailsFieldTable extends Component {
     onChange(field.value, field.id);
   }
 
-  addNewColumn() {
-    const { field, onChange } = this.props;
-    const { gridApi, columnApi } = this.state
-
-    let columnDefs = gridApi.getColumnDefs();
-    let columnName = this.nextUniqueId();
-    columnDefs.push({
-      headerName: columnName,
-      field: columnName,
-    });
-    gridApi.setColumnDefs(columnDefs);
-    field.value.columns = gridApi.getColumnDefs();
-    field.value.columnStates = columnApi.getColumnState();
-
-    onChange(field.value, field.id);
-  }
-
   addNewRow() {
     const { field, onChange } = this.props;
     const { gridApi } = this.state
@@ -412,7 +391,6 @@ export default class ResearchPlanDetailsFieldTable extends Component {
       rowDrag: true,
       sortable: true,
       editable: true,
-      cellEditor: 'agTextCellEditor',
       cellClass: 'cell-figure',
     };
 
