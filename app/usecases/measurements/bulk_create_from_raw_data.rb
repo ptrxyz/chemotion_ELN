@@ -31,7 +31,7 @@ module Usecases
       end
 
       def execute!
-        params.map do |entry|
+        params[:raw_data].map do |entry|
           entry['errors'] ||= []
           check_sample_availability!(entry)
           check_sample_permissions!(entry)
