@@ -6,6 +6,7 @@ describe Usecases::Measurements::BulkCreateFromRawData do
   let(:current_user) { create(:person) }
   let(:wellplate) { create(:wellplate, :with_random_wells, number_of_readouts: 3) }
   let(:collection) { create(:collection, user_id: current_user.id, is_shared: true, permission_level: 3) }
+  let(:research_plan) { create(:research_plan) }
   let(:raw_data) do 
     wellplate.wells.map do |well|
       well.readouts.map.with_index do |readout, readout_index|
@@ -18,8 +19,16 @@ describe Usecases::Measurements::BulkCreateFromRawData do
       end
     end.flatten
   end
+  let(:params) do
+    {
+      raw_data: raw_data,
+      source_id: research_plan.id,
+      source_type: 'research_plan'
+    }
+  end
 
   before do
+    CollectionsResearchPlan.create(research_plan: research_plan, collection: collection)
     wellplate.wells.each do |well|
       CollectionsSample.create!(sample: well.sample, collection: collection)
     end
@@ -27,7 +36,7 @@ describe Usecases::Measurements::BulkCreateFromRawData do
 
   context 'when all data is accessible' do
     it 'creates measurements for each data point' do
-      expect { described_class.new(current_user, raw_data).execute! }.to change(Measurement, :count).by(96 * 3)
+      expect { described_class.new(current_user, params).execute! }.to change(Measurement, :count).by(96 * 3)
 
       measurements = Measurement.last(96 * 3)
 

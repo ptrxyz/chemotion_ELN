@@ -20,6 +20,8 @@ module Usecases
       #     sample_identifier
       #     unit
       #     value
+      #     source_type
+      #     source_id
       #   }
       # ]
       # source_type: String with name of ActiveRecord Model class
