@@ -1,3 +1,5 @@
+import Aviator from 'aviator';
+import { researchPlanShowOrNew } from './routesUtils';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ElementActions from './actions/ElementActions';
@@ -19,13 +21,36 @@ export default class MeasurementsList extends React.Component {
     });
   }
 
+  // currently only research plan is supported as source
+  navigateToSource(measurement) {
+    const { params, uri } = Aviator.getCurrentRequest();
+    Aviator.navigate(`${uri}/${measurement.source_type}/${measurement.source_id}`, { silent: true });
+    if (measurement.source_type == 'research_plan') {
+      researchPlanShowOrNew({ params: { research_planID: measurement.source_id } });
+    }
+  }
+
   renderEntry(entry) {
     const measurements = entry.measurements.map(measurement => {
-      return (
-        <li className="measurementList--measurement" key={`Measurement${measurement.id}`}>
-          {measurement.description}: {measurement.value}{measurement.unit}
-        </li>
-      );
+      if (measurement.source_id) {
+        return (
+          <li className="measurementList--measurement" key={`Measurement${measurement.id}`}>
+            <a
+              key={`MeasurementSource${measurement.id}`}
+              onClick={() => this.navigateToSource(measurement)}
+              style={{ cursor: 'pointer' }}
+            >
+              {measurement.description}: {measurement.value}{measurement.unit}
+            </a>
+          </li>
+        );
+      } else {
+        return (
+          <li className="measurementList--measurement" key={`Measurement${measurement.id}`}>
+            {measurement.description}: {measurement.value}{measurement.unit}
+          </li>
+        );
+      }
     });
 
     return (

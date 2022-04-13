@@ -26,7 +26,7 @@ module Usecases
       # source_id: Database ID of the source record
       def initialize(current_user, params)
         @params = params
-        @source = params[:source_type].constantize.find(params[:source_id])
+        @source = params[:source_type].classify.constantize.find(params[:source_id])
         @current_user = current_user
       end
 

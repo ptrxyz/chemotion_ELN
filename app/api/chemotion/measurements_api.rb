@@ -26,7 +26,7 @@ module Chemotion
       #         description: abc
       #         value: 1.3
       #         unit: g
-      #         source_type: ResearchPlan
+      #         source_type: research_plan
       #         source_id: 2342
       #       }
       #     },
@@ -49,7 +49,7 @@ module Chemotion
 
         scope = Measurement.where(sample_id: samples.pluck(:id))
         if params.key(:source_type) && params.key?(:source_id)
-          scope = scope.where(source_type: params[:source_type], source_id: params[:source_id])
+          scope = scope.where(source_type: params[:source_type].classify, source_id: params[:source_id])
         end
         measurements = scope.to_a
         results = []
@@ -64,7 +64,7 @@ module Chemotion
                 description: measurement.description,
                 value: measurement.value,
                 unit: measurement.unit,
-                source_type: measurement.source_type,
+                source_type: measurement.source_type.underscore,
                 source_id: measurement.source_id
               }
             end
