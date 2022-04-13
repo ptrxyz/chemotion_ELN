@@ -86,9 +86,6 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
     }
     LoadingActions.start();
     MeasurementsFetcher.createMeasurements(selectedCandidates, this.state.researchPlanId).then((result) => {
-      console.debug('Got Post Result!');
-      console.debug(result);
-
       result.forEach((measurement) => {
         var index = measurementCandidates.findIndex(candidate => candidate.uuid === measurement.uuid);
         if (index > -1) { // safeguard to make sure the script does not crash if for whatever reason the candidate can not be found
