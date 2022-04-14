@@ -1,4 +1,5 @@
 import Aviator from 'aviator';
+import equal from 'deep-equal';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, ButtonToolbar, Button, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
@@ -25,7 +26,7 @@ class MeasurementCandidate extends Component {
     if (this.props.id) { return ''; } // Prevent resubmitting if the server has already supplied an ID
 
     return (
-      <input 
+      <input
         type="checkbox"
         className="measurementSelector"
         checked={this.props.selected}
@@ -56,15 +57,22 @@ MeasurementCandidate.propTypes = {
   value: PropTypes.string,
 };
 
-
 export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends Component {
   constructor(props) {
     super(props);
-    const measurementCandidates = this._measurementCandidates(props.rows, props.columns);
+
     this.state = {
-      measurementCandidates: measurementCandidates,
+      measurementCandidates: this._measurementCandidates(props.rows, props.columns),
       researchPlanId: this.getResearchPlanIdFromPath() ?? -1
     };
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (equal(this.props, prevProps)) {
+      return;
+    }
+
+    this.setState({measurementCandidates: this._measurementCandidates(this.props.rows, this.props.columns)})
   }
 
   getResearchPlanIdFromPath() {
@@ -138,7 +146,7 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
                     errors={candidate.errors}
                     id={candidate.id}
                     key={candidate.uuid}
-                    onChange={candidate.onChange}
+                    onChange={this._toggleCandidate.bind(this)}
                     sample_identifier={candidate.sample_identifier}
                     selected={candidate.selected}
                     unit={candidate.unit}
@@ -171,6 +179,13 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
         candidate.selected = true;
       }
     });
+    this.setState({measurementCandidates});
+  }
+
+  _toggleCandidate(uuid) {
+    const { measurementCandidates } = this.state;
+    const index = measurementCandidates.findIndex(candidate => candidate.uuid === uuid);
+    measurementCandidates[index].selected = !measurementCandidates[index].selected;
     this.setState({measurementCandidates});
   }
 
@@ -210,13 +225,6 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
     return readouts;
   }
 
-  _toggleCandidate(uuid) {
-    const { measurementCandidates } = this.state;
-    const index = measurementCandidates.findIndex(candidate => candidate.uuid === uuid);
-    measurementCandidates[index].selected = !measurementCandidates[index].selected;
-    this.setState({measurementCandidates});
-  }
-
   _measurementCandidates(rows, columns) {
     const candidates = [];
     const readouts = this._readouts(columns);
@@ -232,7 +240,6 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
           unit: row[readout.unitColumn],
           errors: [],
           selected: false,
-          onChange: this._toggleCandidate.bind(this),
         }
         this._validateCandidate(candidate);
 
@@ -257,7 +264,6 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
       candidate.errors.push('Missing unit');
     }
   }
-
 }
 
 ResearchPlanDetailsFieldTableMeasurementExportModal.propTypes = {
