@@ -1,13 +1,39 @@
-process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-const { merge } = require('@rails/webpacker')
-const webpackConfig = require('./base')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+const { merge } = require('@rails/webpacker');
+const webpackConfig = require('./base');
 const developmentConfig = {
   devServer: {
     port: '3035',
     host: '0.0.0.0',
     compress: true,
-    public: 'webpacker:3035' // name of the webpacker container from docker-compose-dev.yml works as host
+    hot: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    }
+  },
+  target: 'web',
+  plugins: [
+    new ReactRefreshWebpackPlugin()
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: require.resolve('babel-loader'),
+            options: {
+              plugins: [
+                require.resolve('react-refresh/babel')
+              ]
+            }
+          }
+        ]
+      }
+    ]
   }
 };
 
