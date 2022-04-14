@@ -37,7 +37,7 @@ class Measurement < ApplicationRecord
 
   def data_is_unique
     if (Measurement.where(sample: sample, value: value, unit: unit, source: source).any?)
-      errors.add('Measurement with same data already exists')
+      errors.add(:value, 'Measurement with same data already exists')
     end
   end
 end
