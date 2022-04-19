@@ -40,4 +40,16 @@ export default class MeasurementsFetcher {
       .then(json => json.bulk_create_from_raw_data)
       .catch((errorMessage) => { console.log(errorMessage); });
   }
+
+  static deleteMeasurement(measurementId) {
+    return fetch(`/api/v1/measurements/${measurementId}`, {
+      credentials: 'same-origin',
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+      .catch(errorMessage => console.log(errorMessage));
+  }
 }

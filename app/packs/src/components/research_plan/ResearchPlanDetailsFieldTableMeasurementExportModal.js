@@ -16,7 +16,7 @@ class MeasurementCandidate extends Component {
     if (this.props.id) {
       return (<span className='success'>Success: Created measurement for sample</span>);
     }
-    if (this.props.errors.length > 0 ) {
+    if (this.props.errors.length > 0) {
       return (<span className='danger'>Error: {this.props.errors.join('. ')}</span>);
     }
   }
@@ -67,12 +67,12 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
     };
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps, _prevState, _snapshot) {
     if (equal(this.props, prevProps)) {
       return;
     }
 
-    this.setState({measurementCandidates: this._measurementCandidates(this.props.rows, this.props.columns)})
+    this.setState({ measurementCandidates: this._measurementCandidates(this.props.rows, this.props.columns) })
   }
 
   getResearchPlanIdFromPath() {
@@ -105,7 +105,7 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
           }
         }
       });
-      this.setState({measurementCandidates});
+      this.setState({ measurementCandidates });
       LoadingActions.stop();
     });
 
@@ -179,24 +179,24 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
         candidate.selected = true;
       }
     });
-    this.setState({measurementCandidates});
+    this.setState({ measurementCandidates });
   }
 
   _toggleCandidate(uuid) {
     const { measurementCandidates } = this.state;
     const index = measurementCandidates.findIndex(candidate => candidate.uuid === uuid);
     measurementCandidates[index].selected = !measurementCandidates[index].selected;
-    this.setState({measurementCandidates});
+    this.setState({ measurementCandidates });
   }
 
   _sampleColumnField(columns) {
-    const sampleColumn =  columns.find((column) => {
+    const sampleColumn = columns.find((column) => {
       const matcher = /^Sample|sample$/
       return column.headerName.match(matcher) ||
         column.field.match(matcher) ||
         column.colId.match(matcher)
     });
-    
+
     if (sampleColumn !== undefined) {
       return sampleColumn.field;
     } else {
@@ -205,7 +205,7 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
   }
 
   _readouts(columns) {
-    const readouts = []; 
+    const readouts = [];
 
     // TODO: recognize if readout column duplicates exist
     columns.forEach((column) => {
@@ -229,7 +229,7 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
     const candidates = [];
     const readouts = this._readouts(columns);
     const sampleColumnField = this._sampleColumnField(columns);
-    
+
     rows.forEach((row) => {
       readouts.forEach((readout) => {
         var candidate = {
