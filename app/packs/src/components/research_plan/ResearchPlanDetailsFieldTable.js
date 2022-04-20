@@ -51,14 +51,15 @@ export default class ResearchPlanDetailsFieldTable extends Component {
 
   buildColumn(columnName) {
     return {
-      key: columnName,
-      name: columnName,
-      headerName: columnName,
+      cellEditor: 'agTextCellEditor',
       colId: columnName,
       editable: true,
+      field: columnName,
+      headerName: columnName,
+      key: columnName,
+      name: columnName,
       resizable: true,
       width: 200,
-      cellEditor: 'agTextCellEditor'
     };
   }
 
@@ -428,21 +429,21 @@ export default class ResearchPlanDetailsFieldTable extends Component {
                 Paste
               </MenuItem>
               <MenuItem onClick={this.handleRenameClick.bind(this)}>
-                  Rename column
+                Rename column
               </MenuItem>
               <MenuItem divider />
               <MenuItem onClick={this.handleInsertColumnClick.bind(this)}>
-                  Add new column
+                Add new column
               </MenuItem>
               <MenuItem onClick={this.addNewRow.bind(this)}>
-                  Add new row
+                Add new row
               </MenuItem>
               <MenuItem divider />
               <MenuItem onClick={this.removeThisColumn.bind(this)}>
-                  Remove this column
+                Remove this column
               </MenuItem>
               <MenuItem onClick={this.removeThisRow.bind(this)}>
-                  Remove this row
+                Remove this row
               </MenuItem>
             </ContextMenu>
           </div>
