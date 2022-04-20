@@ -43,7 +43,7 @@ export default class MeasurementsTable extends Component {
       });
 
       return (
-        <tr className="measurementTable--Sample">
+        <tr className="measurementTable--Sample" key={`MeasurementTableSample${sample.id}`}>
           {columnsForRow}
         </tr>
       );
