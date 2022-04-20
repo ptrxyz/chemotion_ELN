@@ -2,7 +2,7 @@ import Aviator from 'aviator';
 import equal from 'deep-equal';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, ButtonToolbar, Button, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
+import { Modal, ButtonToolbar, Button, ButtonGroup, DropdownButton, MenuItem, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
 import LoadingActions from '../actions/LoadingActions';
 import MeasurementsFetcher from '../fetchers/MeasurementsFetcher';
@@ -132,7 +132,7 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
           <table className="table">
             <thead>
               <tr>
-                <th><Button onClick={this._selectAll.bind(this)}>Select all</Button></th>
+                <th>{this._selectAllButton()}</th>
                 <th>Sample</th>
                 <th>Measurement</th>
                 <th>Status</th>
@@ -172,14 +172,45 @@ export default class ResearchPlanDetailsFieldTableMeasurementExportModal extends
     );
   }
 
-  _selectAll() {
+  _selectAll(prefix = null) {
     const { measurementCandidates } = this.state;
     measurementCandidates.forEach((candidate) => {
-      if (candidate.errors.length === 0) {
+      const candidate_has_no_errors = candidate.errors.length === 0
+      const candidate_matches_prefix = prefix == null || candidate.description == prefix
+
+      if (candidate_has_no_errors && candidate_matches_prefix) {
         candidate.selected = true;
       }
     });
     this.setState({ measurementCandidates });
+  }
+
+  _selectAllButton() {
+    const prefixes = this._readouts(this.props.columns).map(readout => readout.description)
+    if (prefixes.length == 1) {
+      return (
+        <Button onClick={() => this._selectAll.bind(this)()}>Select all</Button>
+      );
+    } else {
+      const readoutSelectors = prefixes.map((prefix, index) => (
+        <MenuItem
+          eventKey={prefix}
+          key={`SelectAllButtonForReadout${index}`}
+          onClick={() => this._selectAll.bind(this)(prefix)}
+        >
+          {prefix}
+        </MenuItem>
+      ));
+
+      return (
+        <ButtonGroup>
+          <Button onClick={() => this._selectAll.bind(this)()}>Select all</Button>
+          <DropdownButton title="by Readout">
+            {readoutSelectors}
+          </DropdownButton>
+        </ButtonGroup>
+      );
+    }
   }
 
   _toggleCandidate(uuid) {
