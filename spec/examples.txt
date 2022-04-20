@@ -19,7 +19,12 @@ example_id                                                                  | st
 ./spec/api/attachment_api_spec.rb[2:1:1:1:5]                                | passed  | 2.06 seconds           |
 ./spec/api/attachment_api_spec.rb[2:1:2:1:1]                                | passed  | 2.32 seconds           |
 ./spec/api/attachment_api_spec.rb[2:1:2:1:2]                                | passed  | 2.22 seconds           |
-./spec/api/chemotion/measurements_api_spec.rb[1:1:1:1]                      | passed  | 1 minute 11.64 seconds |
+./spec/api/chemotion/measurements_api_spec.rb[1:1:1:1:1]                    | passed  | 1.66 seconds           |
+./spec/api/chemotion/measurements_api_spec.rb[1:1:1:1:2:1]                  | passed  | 1.48 seconds           |
+./spec/api/chemotion/measurements_api_spec.rb[1:1:1:1:3:1]                  | passed  | 1.5 seconds            |
+./spec/api/chemotion/measurements_api_spec.rb[1:1:1:1:4:1]                  | passed  | 1.8 seconds            |
+./spec/api/chemotion/measurements_api_spec.rb[1:1:2:1]                      | passed  | 1 minute 16.54 seconds |
+./spec/api/chemotion/measurements_api_spec.rb[1:1:3:1]                      | passed  | 0.8809 seconds         |
 ./spec/api/collection_api_spec.rb[1:1:1:1:1:1]                              | passed  | 0.88351 seconds        |
 ./spec/api/collection_api_spec.rb[1:1:1:1:2:1]                              | passed  | 1.84 seconds           |
 ./spec/api/collection_api_spec.rb[1:1:1:1:2:2]                              | passed  | 1.99 seconds           |

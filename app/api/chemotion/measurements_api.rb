@@ -48,7 +48,7 @@ module Chemotion
         end
 
         scope = Measurement.where(sample_id: samples.pluck(:id))
-        if params.key(:source_type) && params.key?(:source_id)
+        if params.key?(:source_type) && params.key?(:source_id)
           scope = scope.where(source_type: params[:source_type].classify, source_id: params[:source_id])
         end
         measurements = scope.to_a
@@ -72,6 +72,21 @@ module Chemotion
           results << entry if entry[:measurements].any?
         end
         results
+      end
+
+      # params do
+      #   requires :id, type: Integer, desc: 'ID of measurement to delete'
+      # end
+      route_param :id do
+        delete do
+          measurement = Measurement.find(params[:id])
+          # TODO: klären wie hier die Permissions geprüft werden müssen
+          if measurement.destroy
+            { success: true }
+          else
+            { errors: measurement.errors.full_messages }
+          end
+        end
       end
 
       namespace :bulk_create_from_raw_data do
