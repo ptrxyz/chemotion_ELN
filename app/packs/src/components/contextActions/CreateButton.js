@@ -14,6 +14,25 @@ import ClipboardActions from 'src/stores/alt/actions/ClipboardActions';
 import SamplesFetcher from 'src/fetchers/SamplesFetcher';
 import MatrixCheck from 'src/components/common/MatrixCheck';
 
+const elementList = () => {
+  const elements = [
+    { name: 'sample', label: 'Sample' },
+    { name: 'reaction', label: 'Reaction' },
+    { name: 'wellplate', label: 'Wellplate' },
+    { name: 'screen', label: 'Screen' },
+    { name: 'research_plan', label: 'Research Plan' }
+  ];
+  let genericEls = [];
+  const currentUser = (UserStore.getState() && UserStore.getState().currentUser) || {};
+
+  if (MatrixCheck(currentUser.matrix, 'genericElement')) {
+    genericEls = UserStore.getState().genericEls || [];
+  }
+  const itemTables = [];
+
+  return { elements, genericEls, itemTables };
+};
+
 export default class CreateButton extends React.Component {
   constructor(props) {
     super(props);
@@ -226,20 +245,7 @@ export default class CreateButton extends React.Component {
   render() {
     const { isDisabled, customClass } = this.props;
     const type = UserStore.getState().currentType;
-    const elements = [
-      { name: 'sample', label: 'Sample' },
-      { name: 'reaction', label: 'Reaction' },
-      { name: 'wellplate', label: 'Wellplate' },
-      { name: 'screen', label: 'Screen' },
-      { name: 'research_plan', label: 'Research Plan' }
-    ];
-    let genericEls = [];
-    const currentUser = (UserStore.getState() && UserStore.getState().currentUser) || {};
-
-    if (MatrixCheck(currentUser.matrix, 'genericElement')) {
-      genericEls = UserStore.getState().genericEls || [];
-    }
-    const itemTables = [];
+    const { elements, genericEls, itemTables } = elementList();
 
     elements.concat(genericEls).forEach((el) => {
       itemTables.push(<MenuItem id={`create-${el.name}-button`} key={el.name} onSelect={() => this.createElementOfType(`${el.name}`)}>Create {el.label}</MenuItem>);
@@ -286,3 +292,5 @@ CreateButton.propTypes = {
 CreateButton.defaultProps = {
   customClass: null,
 };
+
+export { elementList };
