@@ -1,7 +1,7 @@
 class WellSerializer < ActiveModel::Serializer
   attributes *DetailLevels::Well.new.base_attributes
 
-  has_one :sample
+  has_one :sample, serializer: SampleSerializer
 
   def position
     #wrap position_x and y to position object
