@@ -24,6 +24,8 @@ class WellSerializer < ActiveModel::Serializer
 end
 
 class WellSerializer::Level10 < WellSerializer
+  has_one :sample
+
   alias_method :original_initialize, :initialize
   def initialize(element, nested_detail_levels)
     original_initialize(element)
