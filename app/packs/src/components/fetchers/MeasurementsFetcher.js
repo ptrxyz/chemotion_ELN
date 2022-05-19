@@ -3,6 +3,11 @@ import Measurement from '../models/measurement';
 
 export default class MeasurementsFetcher {
   static fetchMeasurementHierarchy(sample) {
+    // No measurement fetching for new samples
+    if (sample.is_new == true) {
+      return new Promise(() => []);
+    }
+
     const promise = fetch(`/api/v1/measurements/?sample_id=${sample.id}`, {
       credentials: 'same-origin',
       method: 'GET',
