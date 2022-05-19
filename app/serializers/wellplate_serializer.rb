@@ -2,7 +2,7 @@
 
 class WellplateSerializer < ActiveModel::Serializer
   attributes(*DetailLevels::Wellplate.new.base_attributes)
-  has_many :wells
+  has_many :wells, serializer: WellSerializer
   has_one :container, serializer: ContainerSerializer
   has_one :tag
   has_many :segments
