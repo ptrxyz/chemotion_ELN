@@ -16,24 +16,46 @@ module Usecases
           wellplate.set_short_label(user: @current_user)
           wellplate.reload
           wellplate.save_segments(segments: params[:segments], current_user_id: @current_user.id)
-          collection = current_user.collections.where(id: params[:collection_id]).take
-          CollectionsWellplate.create(wellplate: wellplate, collection: collection) if collection.present?
 
           is_shared_collection = false
-          unless collection.present?
-            sync_collection = current_user.all_sync_in_collections_users.where(id: params[:collection_id]).take
-            if sync_collection.present?
-              is_shared_collection = true
-              CollectionsWellplate.create(wellplate: wellplate, collection: Collection.find(sync_collection['collection_id']))
-              CollectionsWellplate.create(wellplate: wellplate, collection: Collection.get_all_collection_for_user(sync_collection['shared_by_id']))
-            end
+          if user_collection
+            CollectionsWellplate.create(wellplate: wellplate, collection: user_collection)
+          elsif sync_collection
+            is_shared_collection = true
+            CollectionsWellplate.create(wellplate: wellplate, collection: sync_collection)
+
+            CollectionsWellplate.create(wellplate: wellplate, collection: all_collection_of_sharer)
           end
 
-          CollectionsWellplate.create(wellplate: wellplate, collection: Collection.get_all_collection_for_user(current_user.id)) unless is_shared_collection
+          CollectionsWellplate.create(
+            wellplate: wellplate,
+            collection: all_collection_of_current_user
+          ) unless is_shared_collection
 
-          WellplateUpdater.update_wells_for_wellplate(wellplate, params[:wells])
+          WellplateUpdater
+            .new(wellplate: wellplate, current_user: current_user)
+            .update_wells(well_data: params[:wells])
+
           wellplate
         end
+      end
+
+      private
+
+      def user_collection
+        @user_collection ||= current_user.collections.find_by(id: params[:collection_id])
+      end
+
+      def sync_collection
+        @sync_collection ||= current_user.all_sync_in_collections_users.find_by(id: params[:collection_id]).collection
+      end
+
+      def all_collection_of_sharer
+        Collection.get_all_collection_for_user(sync_collection.shared_by_id)
+      end
+
+      def all_collection_of_current_user
+        Collection.get_all_collection_for_user(current_user.id)
       end
     end
   end
