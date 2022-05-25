@@ -169,7 +169,7 @@ namespace :delayed_job do
   end
 
   def delayed_job_roles
-    fetch(:delayed_job_server_role, :app)
+    fetch(:delayed_job_server_role, :worker)
   end
 
   desc 'Stop the delayed_job process'
