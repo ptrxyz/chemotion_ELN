@@ -23,7 +23,8 @@ class TabLayoutCell extends Component {
 
   render() {
     const {
-      connectDragSource, sourceType, isHidden, cell, connectDropTarget, isElementDetails, title
+      connectDragSource, sourceType, isHidden, cell, connectDropTarget, isElementDetails, title,
+      isCollectionTab
     } = this.props;
 
     const styleObj = {
@@ -46,7 +47,7 @@ class TabLayoutCell extends Component {
       ttd = genericEl.desc;
     }
 
-    const layoutCell = isElementDetails ? (
+    let layoutCell = isElementDetails ? (
       <tr>
         <td className={isHidden ? 'hidden-layout' : ''}>
           <div style={{ width: '100%' }}>
@@ -56,10 +57,22 @@ class TabLayoutCell extends Component {
       </tr>
     ) : (
       <td className={isHidden ? 'hidden-layout' : ''}>
-        <div><OverlayTrigger delayShow={500} placement="top" overlay={<Tooltip id="_tooltip_history" className="left_tooltip">{ttl}<br />{ttd}</Tooltip>}><i className={iconCell} /></OverlayTrigger></div>
+        <div><OverlayTrigger delayShow={500} placement="top"
+                             overlay={<Tooltip id="_tooltip_history" className="left_tooltip">{ttl}<br />{ttd}</Tooltip>}>
+               <i className={iconCell} />
+             </OverlayTrigger>
+        </div>
       </td>
     );
-
+    layoutCell = isCollectionTab ? (
+      <td className={isHidden ? 'hidden-layout' : ''} style={{ padding: '5px' }}>
+        <div style={{ width: 'auto' }}>
+          <i style={styleObj}>{title === 'hidden' ? '-' : title}</i>
+        </div>
+      </td>
+    ) : (
+      layoutCell
+    );
     if (sourceType === '') {
       return layoutCell;
     }
