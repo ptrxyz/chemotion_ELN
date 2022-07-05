@@ -16,6 +16,8 @@ export default class VersionsTable extends Component {
       page: 1,
       pages: 1,
     };
+
+    this.updateParent = this.updateParent.bind(this);
   }
 
   componentDidMount() {
@@ -51,7 +53,12 @@ export default class VersionsTable extends Component {
     });
   }
 
+  updateParent(name, kind, value) {
+    this.props.updateGrandparent(name, kind, value);
+  }
+
   render() {
+    const { type } = this.props;
     const { versions } = this.state;
 
     const pagination = () => (
@@ -105,7 +112,7 @@ export default class VersionsTable extends Component {
       onlyOneExpanding: true,
       parentClassName: 'active',
       renderer: row => (
-        <VersionsTableChanges changes={row.changes} />
+        <VersionsTableChanges type={type} changes={row.changes} updateParent={this.updateParent}/>
       ),
     };
 

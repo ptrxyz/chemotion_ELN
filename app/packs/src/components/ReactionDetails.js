@@ -61,29 +61,6 @@ const productLink = product => (
   </span>
 );
 
-const handleProductClick = (product) => {
-  const uri = Aviator.getCurrentURI();
-  const uriArray = uri.split(/\//);
-  Aviator.navigate(`/${uriArray[1]}/${uriArray[2]}/sample/${product.id}`, { silent: true });
-  sampleShowOrNew({ params: { sampleID: product.id } });
-};
-
-const productLink = product => (
-  <span>
-    Analysis:
-    &nbsp;
-    <span
-      aria-hidden="true"
-      className="pseudo-link"
-      onClick={() => handleProductClick(product)}
-      style={{ cursor: 'pointer' }}
-      title="Open sample window"
-    >
-      <i className="icon-sample" />&nbsp;{product.title()}
-    </span>
-  </span>
-);
-
 export default class ReactionDetails extends Component {
   constructor(props) {
     super(props);
@@ -110,6 +87,8 @@ export default class ReactionDetails extends Component {
     if (!reaction.reaction_svg_file) {
       this.updateReactionSvg();
     }
+    
+    this.updateGrandparent = this.updateGrandparent.bind(this);
   }
 
 
@@ -440,6 +419,12 @@ export default class ReactionDetails extends Component {
     this.setState({ reaction });
   }
 
+  updateGrandparent(name, kind, value) {
+    let { reaction } = this.state;
+    reaction[name] = value;
+    this.setState({ reaction });
+  }
+
   render() {
     const { reaction } = this.state;
     const { visible } = this.state;
@@ -490,6 +475,7 @@ export default class ReactionDetails extends Component {
           <VersionsTable
             type="reactions"
             id={reaction.id}
+            updateGrandparent={this.updateGrandparent}
           />
         </Tab>
       )

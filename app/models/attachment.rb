@@ -54,14 +54,6 @@ class Attachment < ApplicationRecord
 
   belongs_to :attachable, polymorphic: true, optional: true
   has_one :report_template
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> Add a change history /w logidze
-=======
-
->>>>>>> Add a change history /w logidze
 
   scope :where_research_plan, lambda { |c_id|
     where(attachable_id: c_id, attachable_type: 'ResearchPlan')

@@ -158,6 +158,7 @@ export default class SampleDetails extends React.Component {
     this.handleSegmentsChange = this.handleSegmentsChange.bind(this);
     this.decoupleChanged = this.decoupleChanged.bind(this);
     this.handleFastInput = this.handleFastInput.bind(this);
+    this.updateGrandparent = this.updateGrandparent.bind(this);
   }
 
   componentDidMount() {
@@ -225,6 +226,19 @@ export default class SampleDetails extends React.Component {
     this.setState({
       sample,
     }, cb);
+  }
+
+  updateGrandparent(name, kind, value) {
+    let { sample } = this.state;
+    sample[name] = value;
+    if((name == 'boiling_point' || name == 'melting_point') && value) {
+      // remove parenthesis
+      value = value.replace(/[\])}[{(]/g, '');
+      let temperatureArr = value.split(',');
+      sample.updateRange(name, temperatureArr[0], temperatureArr[1]);
+    }
+    
+    this.setState({ sample });
   }
 
   handleAmountChanged(amount) {
@@ -1087,7 +1101,7 @@ export default class SampleDetails extends React.Component {
         key={`${sample.id}_${ind}`}
       >
         <ListGroupItem style={{ paddingBottom: 20 }} >
-          <VersionsTable type="samples" id={sample.id} />
+          <VersionsTable type="samples" id={sample.id} updateGrandparent={this.updateGrandparent} />
         </ListGroupItem>
       </Tab>
     );
@@ -1241,7 +1255,6 @@ export default class SampleDetails extends React.Component {
       measurements: this.measurementsTab('measurements'),
       history: this.historyTab('history'),
     };
-
     if (this.enableComputedProps) {
       tabContentsMap.computed_props = this.moleculeComputedProps('computed_props');
     }
@@ -1297,22 +1310,22 @@ export default class SampleDetails extends React.Component {
     const { pageMessage } = this.state;
     const messageBlock = (pageMessage &&
       (pageMessage.error.length > 0 || pageMessage.warning.length > 0)) ? (
-        <Alert bsStyle="warning" style={{ marginBottom: 'unset', padding: '5px', marginTop: '10px' }}>
-          <strong>Structure Alert</strong>&nbsp;
-          <Button bsSize="xsmall" bsStyle="warning" onClick={() => this.setState({ pageMessage: null })}>Close Alert</Button>
-          <br />
-          {
+      <Alert bsStyle="warning" style={{ marginBottom: 'unset', padding: '5px', marginTop: '10px' }}>
+        <strong>Structure Alert</strong>&nbsp;
+        <Button bsSize="xsmall" bsStyle="warning" onClick={() => this.setState({ pageMessage: null })}>Close Alert</Button>
+        <br />
+        {
           pageMessage.error.map(m => (
             <div key={uuid.v1()}>{m}</div>
           ))
         }
-          {
+        {
           pageMessage.warning.map(m => (
             <div key={uuid.v1()}>{m}</div>
           ))
         }
-        </Alert>
-      ) : null;
+      </Alert>
+    ) : null;
 
     const activeTab = (this.state.activeTab !== 0 && stb.indexOf(this.state.activeTab) > -1 &&
       this.state.activeTab) || visible.get(0);
@@ -1332,13 +1345,8 @@ export default class SampleDetails extends React.Component {
               tabTitles={tabTitlesMap}
               onTabPositionChanged={this.onTabPositionChanged}
             />
-            <Tabs
-              activeKey={activeTab}
-              onSelect={this.handleSelect}
-              id="SampleDetailsXTab"
-              mountOnEnter
-              unmountOnExit
-            >
+            {this.state.sfn ? <ScifinderSearch el={sample} /> : null}
+            <Tabs activeKey={activeTab} onSelect={this.handleSelect} id="SampleDetailsXTab" mountOnEnter unmountOnExit>
               {tabContents}
             </Tabs>
           </ListGroup>
