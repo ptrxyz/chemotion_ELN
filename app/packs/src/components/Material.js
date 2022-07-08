@@ -144,7 +144,7 @@ class Material extends Component {
               metricPrefixes={metricPrefixes}
               precision={3}
               disabled={!permitOn(this.props.reaction) || ((this.props.materialGroup !== 'products') && !material.reference && this.props.lockEquivColumn)}
-              onChange={this.handleAmountUnitChange}
+              onChange={e => this.handleAmountUnitChange(e, material.amount_l)}
               onMetricsChange={this.handleMetricsChange}
               bsStyle={material.amount_unit === 'l' ? 'success' : 'default'}
             />
@@ -323,7 +323,8 @@ class Material extends Component {
     }
   }
 
-  handleAmountUnitChange(e) {
+  handleAmountUnitChange(e, value) {
+    if (e.value === value) return;
     if (this.props.onChange && e) {
       const event = {
         amount: e,
@@ -367,7 +368,7 @@ class Material extends Component {
 
   handleEquivalentChange(e) {
     const equivalent = e.value;
-    if (this.props.onChange) {
+    if (this.props.onChange && e) {
       const event = {
         type: 'equivalentChanged',
         materialGroup: this.props.materialGroup,
@@ -480,7 +481,7 @@ class Material extends Component {
                 metricPrefixes={metricPrefixes}
                 precision={4}
                 disabled={!permitOn(reaction) || (this.props.materialGroup !== 'products' && !material.reference && this.props.lockEquivColumn)}
-                onChange={this.handleAmountUnitChange}
+                onChange={e => this.handleAmountUnitChange(e, material.amount_g)}
                 onMetricsChange={this.handleMetricsChange}
                 bsStyle={material.error_mass ? 'error' : massBsStyle}
               />
@@ -499,7 +500,7 @@ class Material extends Component {
             metricPrefixes={metricPrefixesMol}
             precision={4}
             disabled={!permitOn(reaction) || (this.props.materialGroup === 'products' || (!material.reference && this.props.lockEquivColumn))}
-            onChange={this.handleAmountUnitChange}
+            onChange={e => this.handleAmountUnitChange(e, material.amount_mol)}
             onMetricsChange={this.handleMetricsChange}
             bsStyle={material.amount_unit === 'mol' ? 'success' : 'default'}
           />
@@ -516,7 +517,7 @@ class Material extends Component {
             metricPrefixes={metricPrefixesMolConc}
             precision={4}
             disabled
-            onChange={this.handleAmountUnitChange}
+            onChange={e => this.handleAmountUnitChange(e, material.concn)}
             onMetricsChange={this.handleMetricsChange}
           />
         </td>
