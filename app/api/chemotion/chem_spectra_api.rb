@@ -207,23 +207,6 @@ module Chemotion
           end
         end
 
-        desc 'Return absolute paths of files'
-        params do
-          requires :ids, type: Array[Integer]
-        end
-        post 'files' do
-          files = params[:ids].map do |a_id|
-            att = Attachment.find(a_id)
-            can_dwnld = if att
-              element = att.container.root.containable
-              can_read = ElementPolicy.new(current_user, element).read?
-              can_read && ElementPermissionProxy.new(current_user, element, user_ids).read_dataset?
-            end
-            can_dwnld ? raw_file(att) : nil
-          end
-          { files: files }
-        end
-
         desc 'Return content of jcamp'
         params do
           requires :jcamp_id, type: Array[Integer]
