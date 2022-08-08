@@ -104,7 +104,7 @@ class SpectraActions {
     }
 
     return (dispatch) => {
-      AttachmentFetcher.fetchJcampFilesForNMRDisplayer(idxs)
+      AttachmentFetcher.fetchFiles(idxs)
         .then((fetchedFiles) => {
           dispatch({ fetchedFiles, spcInfos });
         }).catch((errorMessage) => {
