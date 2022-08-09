@@ -102,6 +102,9 @@ module AttachmentJcampAasm
     typname, extname = extension_parts
     return if peaked? || edited?
 
+    is_nmrium = %w[nmrium].include?(extname)
+    return generate_spectrum_from_nmrium() if is_nmrium
+
     return unless FILE_EXT_SPECTRA.include?(extname.downcase)
 
     is_peak_edit = %w[peak edit].include?(typname)
@@ -294,6 +297,20 @@ module AttachmentJcampProcess
 
   def generate_spectrum(is_create = false, is_regen = false, params = {})
     is_create ? create_process(is_regen) : edit_process(is_regen, params)
+  rescue StandardError => e
+    set_failure
+    Rails.logger.info('**** Jcamp Peaks Generation fails ***')
+    Rails.logger.error(e)
+  end
+
+  def generate_spectrum_from_nmrium(params = {})
+    tmp_jcamp = Chemotion::Jcamp::CreateFromNMRium.jcamp_from_nmrium(abs_path)
+    jcamp_att = generate_jcamp_att(tmp_jcamp, 'peak')
+    
+    tmp_files_to_be_deleted = [tmp_jcamp]
+    
+    delete_tmps(tmp_files_to_be_deleted)
+    jcamp_att
   rescue StandardError => e
     set_failure
     Rails.logger.info('**** Jcamp Peaks Generation fails ***')

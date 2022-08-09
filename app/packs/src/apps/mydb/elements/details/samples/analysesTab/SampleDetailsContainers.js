@@ -7,6 +7,8 @@ import UIStore from 'src/stores/alt/stores/UIStore';
 import ArrayUtils from 'src/utilities/ArrayUtils';
 import { reOrderArr } from 'src/utilities/DndControl';
 import ViewSpectra from 'src/apps/mydb/elements/details/ViewSpectra';
+
+import NMRDisplayer from 'src/components/nmr_displayer/NMRDisplayer';
 import {
   RndNotAvailable, RndNoAnalyses,
   RndOrder, RndEdit

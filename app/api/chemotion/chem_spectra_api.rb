@@ -196,8 +196,8 @@ module Chemotion
         end
       end
 
-      resource :nmr_displayer do
-        desc 'Return url of nmrdisplayer'
+      resource :nmrium_wrapper do
+        desc 'Return url of nmrium wrapper'
         route_param :host_name do
           get do
             protocol = Rails.configuration.spectra.nmrdisplayer[:protocol]
@@ -206,19 +206,9 @@ module Chemotion
             { protocol: protocol, url: url, port: port}
           end
         end
-
-        desc 'Return content of jcamp'
-        params do
-          requires :jcamp_id, type: Array[Integer]
-        end
-        route_param :jcamp_id do
-          get do
-            att = Attachment.find(params[:jcamp_id]).first
-            jcamp = raw_file(att)
-            { jcamp: jcamp }
-          end
-        end
+        
       end
+
     end
   end
 end

@@ -55,7 +55,7 @@ export default class UIFetcher {
   }
 
   static fetchNMRDisplayerHost() {
-    return fetch('/api/v1/chemspectra/nmr_displayer/host_name', {
+    return fetch('/api/v1/chemspectra/nmrium_wrapper/host_name', {
       credentials: 'same-origin',
       method: 'GET',
     }).then((response) => {

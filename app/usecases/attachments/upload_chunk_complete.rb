@@ -51,8 +51,16 @@ module Usecases
         )
         attachment.save!
 
+        convert_from_nmrium(attachment)
+
         true
       end
+
+      def convert_from_nmrium(att)
+        att.generate_spectrum_from_nmrium()
+        true
+      end
+
     end
   end
 end

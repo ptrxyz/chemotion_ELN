@@ -80,6 +80,29 @@ const extractJcampWithFailedFiles = (container) => {
   return files;
 };
 
+const extractNMRiumFiles = (container) => {
+  let files = [];
+  container.children.forEach((dt) => {
+    dt.attachments.forEach((att) => {
+      try {
+        const fns = att.filename.split('.');
+        const ext = fns[fns.length - 1];
+        const isNMRium = ext.toLowerCase() === 'nmrium';
+        
+        if (isNMRium) {
+          const file = Object.assign({}, att, {
+            idDt: dt.id,
+          });
+          files = [...files, file];
+        }
+      } catch (err) {
+        // just ignore
+      }
+    });
+  });
+  return files;
+};
+
 const extractAnalysesId = (sample, container) => {
   let idAe = null;
   sample && sample.analysesContainers().forEach((ae) => {
@@ -113,7 +136,9 @@ const BuildSpcInfos = (sample, container) => {
 
 const BuildSpcInfosForNMRDisplayer = (sample, container) => {
   if (!sample || !container) return [];
-  const files = extractJcampWithFailedFiles(container);
+  let files = extractJcampWithFailedFiles(container);
+  const nmriumFiles = extractNMRiumFiles(container);
+  files.push(...nmriumFiles);
   if (files.length < 1) return [];
   const idAe = extractAnalysesId(sample, container);
   return files.map(file => (
