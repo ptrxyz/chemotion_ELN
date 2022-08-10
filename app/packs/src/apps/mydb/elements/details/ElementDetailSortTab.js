@@ -155,7 +155,8 @@ export default class ElementDetailSortTab extends Component {
         rootClose
         onExit={this.handleOnLayoutChanged}
       >
-        <Button bsStyle="info" bsSize="xsmall" className="button-right">
+        <Button bsStyle="info" bsSize="xsmall" className="button-right"
+                title="Tabs layout for all collections can also be managed in Collection Tabs page">
           <i className="fa fa-sliders" aria-hidden="true" />
         </Button>
       </OverlayTrigger>
