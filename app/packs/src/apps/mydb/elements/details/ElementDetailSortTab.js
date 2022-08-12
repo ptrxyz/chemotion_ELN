@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import Immutable from 'immutable';
-import _ from 'lodash';
+import _, { isEmpty } from 'lodash';
 import UserStore from 'src/stores/alt/stores/UserStore';
 import UserActions from 'src/stores/alt/actions/UserActions';
 import TabLayoutContainer from 'src/apps/mydb/elements/tabLayout/TabLayoutContainer';
@@ -124,6 +124,10 @@ export default class ElementDetailSortTab extends Component {
   }
 
   render() {
+    const currentCollection = UIStore.getState().currentCollection;
+    const tabs = currentCollection.tabs_segment;
+    const buttonInfo = isEmpty(tabs) ? 'info' : 'default';
+
     const {
       visible, hidden
     } = this.state;
@@ -155,7 +159,7 @@ export default class ElementDetailSortTab extends Component {
         rootClose
         onExit={this.handleOnLayoutChanged}
       >
-        <Button bsStyle="info" bsSize="xsmall" className="button-right"
+        <Button bsStyle={buttonInfo} bsSize="xsmall" className="button-right"
                 title="Tabs layout for all collections can also be managed in Collection Tabs page">
           <i className="fa fa-sliders" aria-hidden="true" />
         </Button>
