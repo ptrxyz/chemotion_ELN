@@ -13,7 +13,7 @@ import { solventOptions } from './staticDropdownOptions/options';
 import SampleDetailsSolvents from './SampleDetailsSolvents';
 import PrivateNoteElement from './PrivateNoteElement';
 import NotificationActions from './actions/NotificationActions';
-import AddTaskButton from './common/AddTaskButton';
+import AddScanTaskButton from './common/AddScanTaskButton';
 
 
 export default class SampleForm extends React.Component {
@@ -460,7 +460,7 @@ export default class SampleForm extends React.Component {
       <FormGroup>
         <ControlLabel>Amount</ControlLabel>
         <FormControl type="text" disabled defaultValue="***" readOnly />
-        
+
       </FormGroup>
     );
   }
@@ -579,7 +579,7 @@ export default class SampleForm extends React.Component {
                           {this.infoButton()}
                         </InputGroup.Button>
                         <InputGroup.Button style={{ paddingLeft: '5px'}} id="task" name="task" type="task" placeholder="Add Task">
-                            <AddTaskButton data={sample} disabled={sample.has_task}></AddTaskButton>
+                            <AddScanTaskButton data={sample} disabled={sample.has_scan_task}></AddScanTaskButton>
                         </InputGroup.Button>
                       </div>
                     </td>

@@ -12,7 +12,7 @@ import { correctPrefix, validDigit } from './utils/MathUtils';
 import Reaction from './models/Reaction';
 import Sample from './models/Sample';
 import { permitCls, permitOn } from './common/uis';
-import AddTaskButton from './common/AddTaskButton';
+import AddScanTaskButton from './common/AddScanTaskButton';
 
 const matSource = {
   beginDrag(props) {
@@ -458,7 +458,6 @@ class Material extends Component {
 
         <td style={{ width: '25%', maxWidth: '150px' }}>
           {this.materialNameWithIupac(material)}
-          {/* <AddTaskButton data={material} disabled={material.has_task}></AddTaskButton> */}
         </td>
 
         {this.materialRef(material)}
@@ -717,7 +716,7 @@ class Material extends Component {
                 {serialCode}
               </Button>
             </OverlayTrigger>&nbsp;
-            <AddTaskButton data={material} bsSize="xsmall" disabled={material.has_task}></AddTaskButton>
+            <AddScanTaskButton data={material} bsSize="xsmall" disabled={material.has_scan_task}></AddScanTaskButton>
             {materialName}
           </div>
           <span style={iupacStyle}>

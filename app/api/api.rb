@@ -176,7 +176,7 @@ class API < Grape::API
   mount Chemotion::NmrdbAPI
   mount Chemotion::MeasurementsAPI
   mount Chemotion::ConverterAPI
-  mount Chemotion::TaskAPI
+  mount Chemotion::ScanTaskAPI
 
 
   add_swagger_documentation(info: {
