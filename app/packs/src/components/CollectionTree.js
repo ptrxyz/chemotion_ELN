@@ -16,9 +16,9 @@ import UserInfos from 'src/components/UserInfos';
 import DeviceBox from 'src/components/inbox/DeviceBox';
 import UnsortedBox from 'src/components/inbox/UnsortedBox';
 
-import FreeScanBox from './inbox/FreeScanBox';
-import FreeScanActions from './actions/FreeScanActions';
-import FreeScanStore from './stores/FreeScanStore';
+import FreeScanBox from 'src/components/inbox/FreeScanBox';
+import FreeScanActions from 'src/stores/alt/actions/FreeScanActions';
+import FreeScanStore from 'src/stores/alt/stores/FreeScanStore';
 
 const colVisibleTooltip = <Tooltip id="col_visible_tooltip">Toggle own collections</Tooltip>;
 

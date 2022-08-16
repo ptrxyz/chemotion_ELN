@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 import { Radio, FormControl, Button, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { DragSource, DropTarget } from 'react-dnd';
 import { compose } from 'redux';
-import DragDropItemTypes from './DragDropItemTypes';
-import NumeralInputWithUnitsCompo from './NumeralInputWithUnitsCompo';
-import SampleName from './common/SampleName';
-import ElementActions from './actions/ElementActions';
-import { UrlSilentNavigation, SampleCode } from './utils/ElementUtils';
-import { correctPrefix, validDigit } from './utils/MathUtils';
-import Reaction from './models/Reaction';
-import Sample from './models/Sample';
-import { permitCls, permitOn } from './common/uis';
-import AddScanTaskButton from './common/AddScanTaskButton';
+import DragDropItemTypes from 'src/components/DragDropItemTypes';
+import NumeralInputWithUnitsCompo from 'src/components/NumeralInputWithUnitsCompo';
+import SampleName from 'src/components/common/SampleName';
+import ElementActions from 'src/stores/alt/actions/ElementActions';
+import { UrlSilentNavigation, SampleCode } from 'src/utilities/ElementUtils';
+import { correctPrefix, validDigit } from 'src/utilities/MathUtils';
+import Reaction from 'src/models/Reaction';
+import Sample from 'src/models/Sample';
+import { permitCls, permitOn } from 'src/components/common/uis';
+import AddScanTaskButton from 'src/components/common/AddScanTaskButton';
 
 const matSource = {
   beginDrag(props) {
