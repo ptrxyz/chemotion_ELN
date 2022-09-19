@@ -53,11 +53,14 @@ export default class NMRDisplayer extends React.Component {
   loadNMRDisplayerHostInfo() {
     UIFetcher.fetchNMRDisplayerHost().then((response) => {
       const {protocol, url, port} = response;
+      let nmriumOrigin = protocol + '://' + url;
       let nmriumWrapperHost = protocol + '://' + url;
       if (port) {
+        nmriumOrigin += ':' + port;
         nmriumWrapperHost += ':' + port;
       }
-      this.setState({nmriumWrapperHost});
+      nmriumWrapperHost += '/?workspace=embeded';
+      this.setState({nmriumWrapperHost, nmriumOrigin});
     });
   }
 
@@ -69,15 +72,16 @@ export default class NMRDisplayer extends React.Component {
   }
 
   receiveMessage(event) {
-    const { nmriumWrapperHost } = this.state;
+    
+    const { nmriumWrapperHost, nmriumOrigin } = this.state;
     if (nmriumWrapperHost === undefined || nmriumWrapperHost === '') {
       return;
     }
     
-    if (event.origin === nmriumWrapperHost && event.data) {
+    if (event.origin === nmriumOrigin && event.data) {
       const eventData = event.data;
       const eventDataType = eventData.type;
-      
+
       if (eventDataType === 'nmr-wrapper:data-change') {
         const nmrWrapperActionType = eventData.data.actionType;
         if (nmrWrapperActionType !== '') {
@@ -89,6 +93,7 @@ export default class NMRDisplayer extends React.Component {
         const nmrWrapperDataType = eventData.data.type;
         if (nmrWrapperDataType === "exportSpectraViewerAsBlob") {
           const blobData = eventData.data.data.blob;
+          
           this.savingNMRiumWrapperData(blobData);
         }
       }
