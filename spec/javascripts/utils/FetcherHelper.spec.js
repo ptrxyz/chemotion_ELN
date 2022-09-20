@@ -3,8 +3,8 @@ import { describe, it } from 'mocha';
 import base64 from 'base-64';
 
 import {
-  getFileName, downloadBlob, parseBase64ToArrayBuffer,
-} from '../../../app/packs/src/components/utils/FetcherHelper';
+    parseBase64ToArrayBuffer
+} from '../../../app/packs/src/utilities/FetcherHelper';
 
 describe('parseBase64ToArrayBuffer', () => {
   it('return array buffer', () => {

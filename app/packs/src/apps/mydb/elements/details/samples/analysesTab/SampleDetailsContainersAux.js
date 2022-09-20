@@ -56,9 +56,16 @@ const qCheckMsg = (sample, container) => {
   return '';
 };
 
+const isNMRKind = (container) => {
+    if (container.extended_metadata.kind) {
+        return container.extended_metadata.kind.includes('NMR');
+    }
+    return false;
+}
+
 const SpectraEditorBtn = ({
   sample, spcInfos, hasJcamp, hasChemSpectra,
-  toggleSpectraModal, confirmRegenerate, toggleNMRDisplayerModal
+  toggleSpectraModal, confirmRegenerate, toggleNMRDisplayerModal, hasNMRium
 }) => (
   <span>
     <OverlayTrigger
@@ -92,26 +99,30 @@ const SpectraEditorBtn = ({
       </ButtonGroup>
     </OverlayTrigger>
 
-    <OverlayTrigger
-      placement="top"
-      delayShow={500}
-      overlay={<Tooltip id="spectra_nmrium_wrapper">Process with NMRium</Tooltip>}
-    >
-      <ButtonGroup className="button-right">
-        <Button
-          id="spectra-editor-split-button"
-          pullRight
-          bsStyle="info"
-          bsSize="xsmall"
-          onToggle={(open, event) => { if (event) { event.stopPropagation(); } }}
-          onClick={toggleNMRDisplayerModal}
-        >
-          <i className="fa fa-bar-chart"/>
-        </Button>
-      </ButtonGroup>
-    </OverlayTrigger>
-  </span>
-  
+    {
+        hasNMRium ? (
+            <OverlayTrigger
+            placement="top"
+            delayShow={500}
+            overlay={<Tooltip id="spectra_nmrium_wrapper">Process with NMRium</Tooltip>}
+            >
+                <ButtonGroup className="button-right">
+                    <Button
+                    id="spectra-editor-split-button"
+                    pullRight
+                    bsStyle="info"
+                    bsSize="xsmall"
+                    onToggle={(open, event) => { if (event) { event.stopPropagation(); } }}
+                    onClick={toggleNMRDisplayerModal}
+                    >
+                    <i className="fa fa-bar-chart"/>
+                    </Button>
+                </ButtonGroup>
+            </OverlayTrigger>
+        ) : null
+    }
+    
+    </span>
 );
 
 SpectraEditorBtn.propTypes = {
@@ -122,6 +133,7 @@ SpectraEditorBtn.propTypes = {
   toggleSpectraModal: PropTypes.func.isRequired,
   confirmRegenerate: PropTypes.func.isRequired,
   toggleNMRDisplayerModal: PropTypes.func.isRequired,
+  hasNMRium: PropTypes.bool,
 };
 
 SpectraEditorBtn.defaultProps = {
@@ -129,6 +141,7 @@ SpectraEditorBtn.defaultProps = {
   spcInfos: [],
   sample: {},
   hasChemSpectra: false,
+  hasNMRium: false,
 };
 
 const editModeBtn = (toggleMode, isDisabled) => (
@@ -253,6 +266,8 @@ const headerBtnGroup = (
   };
   const { hasChemSpectra } = UIStore.getState();
 
+  const hasNMRium = isNMRKind(container);
+
   return (
     <div className="upper-btn">
       <Button
@@ -277,6 +292,7 @@ const headerBtnGroup = (
         toggleSpectraModal={toggleSpectraModal}
         confirmRegenerate={confirmRegenerate}
         toggleNMRDisplayerModal={toggleNMRDisplayerModal}
+        hasNMRium={hasNMRium}
       />
       <span
         className="button-right add-to-report"

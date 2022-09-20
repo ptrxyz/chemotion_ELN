@@ -9,6 +9,7 @@ import { parseBase64ToArrayBuffer } from 'src/utilities/FetcherHelper';
 import Attachment from 'src/models/Attachment';
 import ElementActions from 'src/stores/alt/actions/ElementActions';
 import { SpectraOps } from 'src/utilities/quillToolbarSymbol';
+import { FN } from '@complat/react-spectra-editor';
 
 export default class NMRDisplayer extends React.Component {
   constructor(props) {
@@ -30,6 +31,10 @@ export default class NMRDisplayer extends React.Component {
     this.requestPreviewImage = this.requestPreviewImage.bind(this);
     this.savingNMRiumWrapperData = this.savingNMRiumWrapperData.bind(this);
     this.saveOp = this.saveOp.bind(this);
+
+    this.findDisplayingSpectra = this.findDisplayingSpectra.bind(this);
+    this.findDisplayingSpectrumID = this.findDisplayingSpectrumID.bind(this);
+    this.buildPeaksBody = this.buildPeaksBody.bind(this);
 
     this.loadNMRDisplayerHostInfo();
   }
@@ -273,10 +278,12 @@ export default class NMRDisplayer extends React.Component {
 
     const analysesContainers = sample.analysesContainers();
 
+    const peaksBody = this.buildPeaksBody(nmriumData);
+
     const layoutOpsObj = SpectraOps[layout];
     const ops = [
       ...layoutOpsObj.head(''),
-      { insert: '' },
+      { insert: peaksBody },
       ...layoutOpsObj.tail(),
     ];
     analysesContainers.forEach((analyses) => {
@@ -289,6 +296,65 @@ export default class NMRDisplayer extends React.Component {
         ];
       }); 
     });
+  }
+
+  buildPeaksBody(nmriumData) {
+    const { preferences } = nmriumData;
+    const layout = preferences.activeTab;
+    const displayingSpectra = this.findDisplayingSpectra(nmriumData);
+    if (displayingSpectra.length > 0) {
+        const firstSpectrum = displayingSpectra[0];
+        const firstSpectrumPeaks = firstSpectrum.peaks;
+        const { values } = firstSpectrumPeaks;
+        const peaks = values;
+        const shift = { enable: false,  peak: false, ref: { label: false, name: "---", value: 0 } };
+        const decimal = 2;
+        const peaksBody = FN.peaksBody({peaks, layout, decimal, shift});
+        return peaksBody;
+    }
+    return '';
+  }
+
+  findDisplayingSpectra(nmriumData) {
+    const { spectra, correlations } = nmriumData;
+    const displayingSpectrumID = this.findDisplayingSpectrumID(correlations);
+    if (displayingSpectrumID) {
+        const displayingSpectra = spectra.filter((spectrum) => {
+            const { id } = spectrum;
+            return id === displayingSpectrumID;
+        });
+        return displayingSpectra;
+    }
+    else {
+        const nonFIDSpectra = spectra.filter((spectrum) => {
+            const { info } = spectrum;
+            const { isFid } = info;
+            return isFid === false;
+        });
+        return nonFIDSpectra;
+    }
+  }
+
+  findDisplayingSpectrumID(correlations) {
+    if (!correlations) {
+        return false;
+    }
+
+    try {
+        const { values } = correlations;
+        if (values.length > 0) {
+            const firstValue = values[0];
+            const { link } = firstValue;
+            if (link.length > 0) {
+                const firstLink = link[0];
+                const { experimentID } = firstLink;
+                return experimentID;
+            }
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
   }
 
   saveOp(sample) {
