@@ -42,7 +42,7 @@ export default class NMRDisplayer extends React.Component {
   componentDidMount() {
     SpectraStore.listen(this.onChange);
 
-    window.addEventListener("message", this.receiveMessage)
+    window.addEventListener('message', this.receiveMessage);
   }
 
   componentWillUnmount() {
@@ -55,34 +55,32 @@ export default class NMRDisplayer extends React.Component {
     this.sendJcampDataToNMRDisplayer();
   }
 
-  loadNMRDisplayerHostInfo() {
-    UIFetcher.fetchNMRDisplayerHost().then((response) => {
-      const {protocol, url, port} = response;
-      let nmriumOrigin = protocol + '://' + url;
-      let nmriumWrapperHost = protocol + '://' + url;
-      if (port) {
-        nmriumOrigin += ':' + port;
-        nmriumWrapperHost += ':' + port;
-      }
-      nmriumWrapperHost += '/?workspace=embeded';
-      this.setState({nmriumWrapperHost, nmriumOrigin});
-    });
-  }
-
   getSpcInfo() {
     const { spcInfos, spcIdx } = this.state;
-    const sis = spcInfos.filter(x => x.idx === spcIdx);
+    const sis = spcInfos.filter((x) => x.idx === spcIdx);
     const si = sis.length > 0 ? sis[0] : spcInfos[0];
     return si;
   }
 
+  loadNMRDisplayerHostInfo() {
+    UIFetcher.fetchNMRDisplayerHost().then((response) => {
+      const { protocol, url, port } = response;
+      let nmriumOrigin = `${protocol}://${url}`;
+      let nmriumWrapperHost = `${protocol}://${url}`;
+      if (port) {
+        nmriumOrigin = `${nmriumOrigin}:${port}`;
+        nmriumWrapperHost = `${nmriumWrapperHost}:${port}`;
+      }
+      this.setState({ nmriumWrapperHost, nmriumOrigin });
+    });
+  }
+
   receiveMessage(event) {
-    
     const { nmriumWrapperHost, nmriumOrigin } = this.state;
     if (nmriumWrapperHost === undefined || nmriumWrapperHost === '') {
       return;
     }
-    
+
     if (event.origin === nmriumOrigin && event.data) {
       const eventData = event.data;
       const eventDataType = eventData.type;
@@ -93,10 +91,9 @@ export default class NMRDisplayer extends React.Component {
           const nmriumData = eventData.data;
           this.setState({ nmriumData });
         }
-      }
-      else if (eventDataType === 'nmr-wrapper:action-response') {
+      } else if (eventDataType === 'nmr-wrapper:action-response') {
         const nmrWrapperDataType = eventData.data.type;
-        if (nmrWrapperDataType === "exportSpectraViewerAsBlob") {
+        if (nmrWrapperDataType === 'exportSpectraViewerAsBlob') {
           const blobData = eventData.data.data.blob;
           
           this.savingNMRiumWrapperData(blobData);
@@ -165,7 +162,8 @@ export default class NMRDisplayer extends React.Component {
         const bufferData = parseBase64ToArrayBuffer(fileToBeShowed);
         const spcInfo = spectraInfos[index];
         const fileName = spcInfo.label;
-        const dataItem = { data: bufferData, name: fileName };
+        const blobToBeSent = new Blob([bufferData]);
+        const dataItem = new File([blobToBeSent], fileName);
         data['data'].push(dataItem);
       }
       return data;
@@ -270,17 +268,24 @@ export default class NMRDisplayer extends React.Component {
   }
 
   prepareAnalysisMetadata(nmriumData) {
-    const { preferences } = nmriumData;
-    const layout = preferences.activeTab;
+    const buildPeaksBodyObject = this.buildPeaksBody(nmriumData);
+    const { peaksBody, layout } = buildPeaksBodyObject;
+
+    if (peaksBody === '' || layout === '') {
+        return '';
+    }
+
+    const layoutOpsObj = SpectraOps[layout];
+
+    if (!layoutOpsObj) {
+        return '';
+    }
 
     const { sample } = this.props;
     const specInfo = this.getSpcInfo();
 
     const analysesContainers = sample.analysesContainers();
 
-    const peaksBody = this.buildPeaksBody(nmriumData);
-
-    const layoutOpsObj = SpectraOps[layout];
     const ops = [
       ...layoutOpsObj.head(''),
       { insert: peaksBody },
@@ -299,20 +304,20 @@ export default class NMRDisplayer extends React.Component {
   }
 
   buildPeaksBody(nmriumData) {
-    const { preferences } = nmriumData;
-    const layout = preferences.activeTab;
     const displayingSpectra = this.findDisplayingSpectra(nmriumData);
-    if (displayingSpectra.length > 0) {
-        const firstSpectrum = displayingSpectra[0];
-        const firstSpectrumPeaks = firstSpectrum.peaks;
-        const { values } = firstSpectrumPeaks;
-        const peaks = values;
-        const shift = { enable: false,  peak: false, ref: { label: false, name: "---", value: 0 } };
-        const decimal = 2;
-        const peaksBody = FN.peaksBody({peaks, layout, decimal, shift});
-        return peaksBody;
+    if (displayingSpectra.length <= 0) {
+        return {peaksBody: '', layout: ''};
     }
-    return '';
+
+    const firstSpectrum = displayingSpectra[0];
+    const firstSpectrumPeaks = firstSpectrum.peaks;
+    const { values } = firstSpectrumPeaks;
+    const peaks = values;
+    const layout = firstSpectrum.nucleus;
+    const shift = { enable: false,  peak: false, ref: { label: false, name: "---", value: 0 } };
+    const decimal = 2;
+    const peaksBody = FN.peaksBody({peaks, layout, decimal, shift});
+    return {peaksBody: peaksBody, layout: layout};
   }
 
   findDisplayingSpectra(nmriumData) {
