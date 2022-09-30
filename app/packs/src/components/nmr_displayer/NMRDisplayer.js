@@ -35,6 +35,7 @@ export default class NMRDisplayer extends React.Component {
     this.findDisplayingSpectra = this.findDisplayingSpectra.bind(this);
     this.findDisplayingSpectrumID = this.findDisplayingSpectrumID.bind(this);
     this.buildPeaksBody = this.buildPeaksBody.bind(this);
+    this.readNMRiumData = this.readNMRiumData.bind(this);
 
     this.loadNMRDisplayerHostInfo();
   }
@@ -47,6 +48,15 @@ export default class NMRDisplayer extends React.Component {
 
   componentWillUnmount() {
     SpectraStore.unlisten(this.onChange);
+  }
+
+  handleNMRDisplayerLoaded() {
+    const isIframeLoaded = true;
+    this.setState({
+      isIframeLoaded,
+    }, () => {
+      this.sendJcampDataToNMRDisplayer();
+    });
   }
 
   onChange(newState) {
@@ -95,7 +105,6 @@ export default class NMRDisplayer extends React.Component {
         const nmrWrapperDataType = eventData.data.type;
         if (nmrWrapperDataType === 'exportSpectraViewerAsBlob') {
           const blobData = eventData.data.data.blob;
-          
           this.savingNMRiumWrapperData(blobData);
         }
       }
@@ -111,21 +120,11 @@ export default class NMRDisplayer extends React.Component {
     if (!iframeCurrent) {
       return;
     }
-    const contentWindow = iframeCurrent.contentWindow;
+    const { contentWindow } = iframeCurrent;
     const dataToBeSent = {
-      type: "exportSpectraViewerAsBlob",
+      type: 'exportSpectraViewerAsBlob',
     };
     contentWindow.postMessage({ type: 'nmr-wrapper:action-request', data: dataToBeSent }, '*');
-  }
-
-  
-  handleNMRDisplayerLoaded() {
-    const isIframeLoaded = true;
-    this.setState({
-      isIframeLoaded,
-    }, () => {
-      this.sendJcampDataToNMRDisplayer();
-    });
   }
 
   sendJcampDataToNMRDisplayer() {
@@ -133,18 +132,18 @@ export default class NMRDisplayer extends React.Component {
     const { fetchedFiles, isIframeLoaded, spcInfos } = this.state;
     if (isIframeLoaded && fetchedFiles && fetchedFiles.files && fetchedFiles.files.length > 0) {
       LoadingActions.stop.defer();
-      
+
       const listFileContents = fetchedFiles.files;
-      if (this.iframeRef.current && listFileContents.length > 0 && listFileContents.length === spcInfos.length) {
+      if (this.iframeRef.current
+        && listFileContents.length > 0
+        && listFileContents.length === spcInfos.length) {
         const dataToBeSent = this.buildDataToBeSent(listFileContents, spcInfos);
-        const contentWindow = this.iframeRef.current.contentWindow;
+        const { contentWindow } = this.iframeRef.current;
         if (contentWindow) {
           contentWindow.postMessage({ type: 'nmr-wrapper:load', data: dataToBeSent }, '*');
         }
-        
       }
-    }
-    else {
+    } else {
       LoadingActions.stop.defer();
     }
   }
@@ -152,33 +151,32 @@ export default class NMRDisplayer extends React.Component {
   buildDataToBeSent(files, spectraInfos) {
     const nmriumData = this.readNMRiumData(files, spectraInfos);
     if (nmriumData) {
-      const data = { data: nmriumData, type: "nmrium" };
+      const data = { data: nmriumData, type: 'nmrium' };
       return data;
     }
-    else {
-      let data = { data: [], type: "file" };
-      for (let index = 0; index < files.length; index++) {
-        const fileToBeShowed = files[index].file;
-        const bufferData = parseBase64ToArrayBuffer(fileToBeShowed);
-        const spcInfo = spectraInfos[index];
-        const fileName = spcInfo.label;
-        const blobToBeSent = new Blob([bufferData]);
-        const dataItem = new File([blobToBeSent], fileName);
-        data['data'].push(dataItem);
-      }
-      return data;
+
+    const data = { data: [], type: 'file' };
+    for (let index = 0; index < files.length; index += 1) {
+      const fileToBeShowed = files[index].file;
+      const bufferData = parseBase64ToArrayBuffer(fileToBeShowed);
+      const spcInfo = spectraInfos[index];
+      const fileName = spcInfo.label;
+      const blobToBeSent = new Blob([bufferData]);
+      const dataItem = new File([blobToBeSent], fileName);
+      data.data.push(dataItem);
     }
+    return data;
   }
 
   readNMRiumData(files, spectraInfos) {
-    const arrNMRiumSpecs = spectraInfos.filter(spc => spc.label.includes(".nmrium"));
+    const arrNMRiumSpecs = spectraInfos.filter((spc) => spc.label.includes('.nmrium'));
     if (!arrNMRiumSpecs || arrNMRiumSpecs.length === 0) {
       return false;
     }
 
     const nmriumSpec = arrNMRiumSpecs[0];
 
-    const arrNMRiumFiles = files.filter(file => file.id === nmriumSpec.idx);
+    const arrNMRiumFiles = files.filter((file) => file.id === nmriumSpec.idx);
     if (!arrNMRiumFiles || arrNMRiumFiles.length === 0) {
       return false;
     }
@@ -204,7 +202,7 @@ export default class NMRDisplayer extends React.Component {
     const imageAttachment = this.prepareImageAttachment(imageBlobData, fileNameWithoutExt);
     const nmriumAttachment = this.prepareNMRiunDataAttachment(nmriumData, fileNameWithoutExt);
     const listFileNameToBeDeleted = [imageAttachment.filename, nmriumAttachment.filename];
-    let datasetToBeUpdated = this.prepareDatasets(listFileNameToBeDeleted);
+    const datasetToBeUpdated = this.prepareDatasets(listFileNameToBeDeleted);
     if (!datasetToBeUpdated) {
       return;
     }
@@ -227,19 +225,19 @@ export default class NMRDisplayer extends React.Component {
     const { sample } = this.props;
 
     const datasetContainers = sample.datasetContainers();
-    const listDatasetFiltered = datasetContainers.filter(e => specInfo.idDt === e.id);
+    const listDatasetFiltered = datasetContainers.filter((e) => specInfo.idDt === e.id);
     if (listDatasetFiltered.length === 0) {
       return false;
     }
 
-    let datasetToBeUpdated = listDatasetFiltered[0];
+    const datasetToBeUpdated = listDatasetFiltered[0];
     const datasetAttachments = datasetToBeUpdated.attachments;
-    datasetAttachments.forEach(att => {
+    datasetAttachments.forEach((att) => {
       if (fileNameToBeDeleted.includes(att.filename)) {
         att.is_deleted = true;
       }
     });
-    datasetToBeUpdated.attachments = datasetAttachments
+    datasetToBeUpdated.attachments = datasetAttachments;
     return datasetToBeUpdated;
   }
 
@@ -247,11 +245,10 @@ export default class NMRDisplayer extends React.Component {
     const spaceIndent = 0;
     const dataAsJson = JSON.stringify(
       nmriumData,
-      (key, value) =>
-        ArrayBuffer.isView(value) ? Array.from(value) : value,
-        spaceIndent,
+      (key, value) => (ArrayBuffer.isView(value) ? Array.from(value) : value),
+      spaceIndent,
     );
-    let blobData = new Blob([dataAsJson], {type : 'text/plain'});
+    const blobData = new Blob([dataAsJson], { type: 'text/plain' });
     const fileName = `${fileNameNoExt}.nmrium`;
     blobData.name = fileName;
     const dataAttachment = Attachment.fromFile(blobData);
@@ -260,7 +257,7 @@ export default class NMRDisplayer extends React.Component {
 
   prepareImageAttachment(blobData, fileNameNoExt) {
     const fileName = `${fileNameNoExt}.svg`;
-    let blobDataToBeSaved = blobData;
+    const blobDataToBeSaved = blobData;
     blobDataToBeSaved.name = fileName;
     const imageAttachment = Attachment.fromFile(blobDataToBeSaved);
     imageAttachment.thumb = true;
@@ -272,13 +269,13 @@ export default class NMRDisplayer extends React.Component {
     const { peaksBody, layout } = buildPeaksBodyObject;
 
     if (peaksBody === '' || layout === '') {
-        return '';
+      return '';
     }
 
     const layoutOpsObj = SpectraOps[layout];
 
     if (!layoutOpsObj) {
-        return '';
+      return '';
     }
 
     const { sample } = this.props;
@@ -299,14 +296,14 @@ export default class NMRDisplayer extends React.Component {
           ...ai.extended_metadata.content.ops,
           ...ops,
         ];
-      }); 
+      });
     });
   }
 
   buildPeaksBody(nmriumData) {
     const displayingSpectra = this.findDisplayingSpectra(nmriumData);
     if (displayingSpectra.length <= 0) {
-        return {peaksBody: '', layout: ''};
+      return { peaksBody: '', layout: '' };
     }
 
     const firstSpectrum = displayingSpectra[0];
@@ -314,51 +311,52 @@ export default class NMRDisplayer extends React.Component {
     const { values } = firstSpectrumPeaks;
     const peaks = values;
     const layout = firstSpectrum.nucleus;
-    const shift = { enable: false,  peak: false, ref: { label: false, name: "---", value: 0 } };
+    const shift = { enable: false, peak: false, ref: { label: false, name: '---', value: 0 } };
     const decimal = 2;
-    const peaksBody = FN.peaksBody({peaks, layout, decimal, shift});
-    return {peaksBody: peaksBody, layout: layout};
+    const peaksBody = FN.peaksBody({
+      peaks, layout, decimal, shift
+    });
+    return { peaksBody, layout };
   }
 
   findDisplayingSpectra(nmriumData) {
     const { spectra, correlations } = nmriumData;
     const displayingSpectrumID = this.findDisplayingSpectrumID(correlations);
     if (displayingSpectrumID) {
-        const displayingSpectra = spectra.filter((spectrum) => {
-            const { id } = spectrum;
-            return id === displayingSpectrumID;
-        });
-        return displayingSpectra;
+      const displayingSpectra = spectra.filter((spectrum) => {
+        const { id } = spectrum;
+        return id === displayingSpectrumID;
+      });
+      return displayingSpectra;
     }
-    else {
-        const nonFIDSpectra = spectra.filter((spectrum) => {
-            const { info } = spectrum;
-            const { isFid } = info;
-            return isFid === false;
-        });
-        return nonFIDSpectra;
-    }
+
+    const nonFIDSpectra = spectra.filter((spectrum) => {
+      const { info } = spectrum;
+      const { isFid } = info;
+      return isFid === false;
+    });
+    return nonFIDSpectra;
   }
 
   findDisplayingSpectrumID(correlations) {
     if (!correlations) {
-        return false;
+      return false;
     }
 
     try {
-        const { values } = correlations;
-        if (values.length > 0) {
-            const firstValue = values[0];
-            const { link } = firstValue;
-            if (link.length > 0) {
-                const firstLink = link[0];
-                const { experimentID } = firstLink;
-                return experimentID;
-            }
+      const { values } = correlations;
+      if (values.length > 0) {
+        const firstValue = values[0];
+        const { link } = firstValue;
+        if (link.length > 0) {
+          const firstLink = link[0];
+          const { experimentID } = firstLink;
+          return experimentID;
         }
-        return false;
+      }
+      return false;
     } catch (error) {
-        return false;
+      return false;
     }
   }
 
@@ -375,13 +373,16 @@ export default class NMRDisplayer extends React.Component {
   renderNMRium(nmriumWrapperHost) {
     return (
       <Modal.Body>
-        <iframe id="nmrium_wrapper" className="spectra-editor" 
+        <iframe
+          id="nmrium_wrapper"
+          className="spectra-editor"
           src={nmriumWrapperHost}
-          allowFullScreen={true}
+          allowFullScreen
           ref={this.iframeRef}
-          onLoad={this.handleNMRDisplayerLoaded}></iframe>
+          onLoad={this.handleNMRDisplayerLoaded}
+        />
       </Modal.Body>
-    )
+    );
   }
 
   renderModalTitle() {
@@ -396,7 +397,9 @@ export default class NMRDisplayer extends React.Component {
           }}
         >
           <span>
-            <i className="fa fa-times" /> Close without Save
+            <i className="fa fa-times" />
+            {' '}
+            Close without Save
           </span>
         </Button>
         <Button
@@ -406,11 +409,13 @@ export default class NMRDisplayer extends React.Component {
           onClick={() => this.requestDataToBeSaved()}
         >
           <span>
-            <i className="fa fa-times" /> Save and Close
+            <i className="fa fa-times" />
+            {' '}
+            Save and Close
           </span>
         </Button>
       </Modal.Header>
-    )
+    );
   }
 
   render() {
@@ -428,6 +433,6 @@ export default class NMRDisplayer extends React.Component {
           {this.renderNMRium(nmriumWrapperHost)}
         </Modal>
       </div>
-    )
+    );
   }
 }
