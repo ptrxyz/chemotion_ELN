@@ -403,13 +403,13 @@ export default class NMRDisplayer extends React.Component {
           </span>
         </Button>
         <Button
-          bsStyle="danger"
+          bsStyle="success"
           bsSize="small"
           className="button-right"
           onClick={() => this.requestDataToBeSaved()}
         >
           <span>
-            <i className="fa fa-times" />
+            <i className="fa fa-floppy-o" />
             {' '}
             Save and Close
           </span>
