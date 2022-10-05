@@ -1,0 +1,31 @@
+FROM ubuntu:focal
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN set -xe  && apt-get update -yqqq --fix-missing && apt-get upgrade -y
+RUN apt update && apt-get install -yqq --fix-missing bash ca-certificates wget apt-transport-https git gpg \
+      imagemagick libmagic-dev libmagickcore-dev libmagickwand-dev curl gnupg2 \
+      build-essential nodejs sudo postgresql-client libappindicator1 swig \
+      gconf-service libasound2 libgconf-2-4 cmake \
+      libnspr4 libnss3 libpango1.0-0 libxss1 xdg-utils tzdata libpq-dev \
+      gtk2-engines-pixbuf \
+      libssl-dev libreadline-dev libyaml-dev lcov \
+      unzip openssh-client \
+      python-dev libsqlite3-dev libboost-all-dev p7zip-full \
+      xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable \
+      fonts-crosextra-caladea fonts-crosextra-carlito \
+      fonts-dejavu fonts-dejavu-core fonts-dejavu-extra fonts-liberation2 fonts-liberation \
+      fonts-linuxlibertine fonts-noto-core fonts-noto-extra fonts-noto-ui-core \
+      fonts-opensymbol fonts-sil-gentium fonts-sil-gentium-basic
+RUN  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list \
+    && apt-get update -yqqq && apt-get -y install google-chrome-stable \
+    && CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` \
+    && mkdir -p /opt/chromedriver-$CHROMEDRIVER_VERSION \
+    && curl -sS -o /tmp/chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip \
+    && unzip -qq /tmp/chromedriver_linux64.zip -d /opt/chromedriver-$CHROMEDRIVER_VERSION \
+    && rm /tmp/chromedriver_linux64.zip \
+    && chmod +x /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver \
+    && ln -fs /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver /usr/local/bin/chromedriver
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
